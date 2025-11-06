@@ -1,0 +1,20 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            // This runs the 'default' target from your parent Makefile
+            "command": "make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            // This helps VS Code understand and show compile errors
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "Runs 'make' in the root project folder."
+        }
+    ]
+}

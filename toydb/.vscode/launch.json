@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch a.out",
+            "type": "cppdbg",
+            "request": "launch",
+            // This is the path to your executable from the folder you 
+            // opened in VS Code (the parent folder).
+            "program": "${workspaceFolder}/amlayer/a.out",
+            "args": [],
+            "stopAtEntry": true,
+            // This is crucial: It runs your program *from* the 'amlayer' 
+            // directory, just like your 'run' target does.
+            "cwd": "${workspaceFolder}/amlayer",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            // This tells VS Code to run the 'build' task before debugging.
+            // We will define this task in the next step.
+            "preLaunchTask": "build"
+        }
+    ]
+}

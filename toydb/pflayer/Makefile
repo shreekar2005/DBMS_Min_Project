@@ -1,4 +1,3 @@
-#PUBLICDIR= /usr0/cs564/public/project
 SRC= buf.c hash.c pf.c
 OBJ= buf.o hash.o pf.o
 HDR = pftypes.h pf.h 
@@ -26,7 +25,7 @@ lint:
 install: pflayer.o 
 
 clean:
-	rm *.o
+	-rm *.o
 
 cleantests:
 	rm testpf testhash
