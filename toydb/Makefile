@@ -5,7 +5,7 @@ LDFLAGS = -g
 AMLAYER_OBJ = amlayer/build/amlayer.o
 PFLAYER_OBJ = pflayer/build/pflayer.o
 
-TARGET = a.out
+TARGET = toydb.out
 
 .PHONY: all test clean
 

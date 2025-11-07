@@ -7,14 +7,6 @@
 #include "../../pflayer/include/pf.h"
 #include "am.h"
 
-/**
- * @brief Creates a secondary index file called fileName.indexNo.
- * @param fileName Name of indexed file.
- * @param indexNo Number of this index for file.
- * @param attrType 'c' for char, 'i' for int, 'f' for float.
- * @param attrLength 4 for 'i' or 'f', 1-255 for 'c'.
- * @return AME_OK on success, or an error code.
- */
 int AM_CreateIndex(char *fileName, int indexNo, char attrType, int attrLength)
 {
 	char *pageBuf;						  /* buffer for holding a page */
@@ -93,12 +85,6 @@ int AM_CreateIndex(char *fileName, int indexNo, char attrType, int attrLength)
 	return (AME_OK);
 }
 
-/**
- * @brief Destroys the index fileName.indexNo.
- * @param fileName Name of indexed file.
- * @param indexNo Number of this index for file.
- * @return AME_OK on success, or an error code.
- */
 int AM_DestroyIndex(char *fileName, int indexNo)
 {
 	char indexfName[AM_MAX_FNAME_LENGTH];
@@ -110,15 +96,6 @@ int AM_DestroyIndex(char *fileName, int indexNo)
 	return (AME_OK);
 }
 
-/**
- * @brief Deletes the recId from the list for value and deletes value if list becomes empty.
- * @param fileDesc File Descriptor.
- * @param attrType 'c', 'i' or 'f'.
- * @param attrLength 4 for 'i' or 'f', 1-255 for 'c'.
- * @param value Value of key whose corr recId is to be deleted.
- * @param recId ID of the record to delete.
- * @return AME_OK on success, or an error code.
- */
 int AM_DeleteEntry(int fileDesc, char attrType, int attrLength, char *value, int recId)
 {
 	char *pageBuf; /* buffer to hold the page */
@@ -232,15 +209,6 @@ int AM_DeleteEntry(int fileDesc, char attrType, int attrLength, char *value, int
 	return (AME_OK);
 }
 
-/**
- * @brief Inserts a value,recId pair into the tree.
- * @param fileDesc File Descriptor.
- * @param attrType 'i' or 'c' or 'f'.
- * @param attrLength 4 for 'i' or 'f', 1-255 for 'c'.
- * @param value Value to be inserted.
- * @param recId recId to be inserted.
- * @return AME_OK on success, or an error code.
- */
 int AM_InsertEntry(int fileDesc, char attrType, int attrLength, char *value, int recId)
 {
 	char *pageBuf;				/* buffer to hold page */
@@ -347,10 +315,6 @@ static char *AMerrormsg[] = {
 	"Invalid file Descriptor",
 	"Invalid value to Delete or Insert Entry"};
 
-/**
- * @brief Prints the AM layer error message.
- * @param s String to print before the error message.
- */
 void AM_PrintError(const char *s)
 {
 	fprintf(stderr, "%s", s);

@@ -8,19 +8,6 @@
 #include "am.h"
 #include "../../pflayer/include/pf.h"
 
-/**
- * @brief Splits a leaf node.
- * @param fileDesc File descriptor.
- * @param pageBuf Pointer to buffer.
- * @param pageNum Pagenumber of new leaf created (output).
- * @param attrLength Length of the attribute.
- * @param recId Record ID for insert.
- * @param value Attribute value for insert.
- * @param status Whether key was found or not in the tree.
- * @param index Place where key is to be inserted.
- * @param key Returns the key to be filled in the parent (output).
- * @return TRUE if a key needs to be added to the parent, FALSE otherwise.
- */
 int AM_SplitLeaf(int fileDesc, char *pageBuf, int *pageNum, int attrLength, int recId, char *value, int status, int index, char *key)
 {
 	AM_LEAFHEADER head, temphead; /* local header */
@@ -103,14 +90,6 @@ int AM_SplitLeaf(int fileDesc, char *pageBuf, int *pageNum, int attrLength, int 
 	}
 }
 
-/**
- * @brief Adds a key and page number to a parent internal node.
- * @param fileDesc File descriptor.
- * @param pageNum Page Number to be added to parent.
- * @param value Pointer to attribute value to be added.
- * @param attrLength Length of the attribute.
- * @return AME_OK on success, or an error code.
- */
 int AM_AddtoParent(int fileDesc, int pageNum, char *value, int attrLength)
 {
 	char tempPage[PF_PAGE_SIZE]; /* temporary page for manipulating page */
@@ -199,14 +178,6 @@ int AM_AddtoParent(int fileDesc, int pageNum, char *value, int attrLength)
 	return (AME_OK);
 }
 
-/**
- * @brief Adds a key to an internal node.
- * @param pageBuf Buffer for the internal node page.
- * @param value Value to be added to the node.
- * @param pageNum Page number of child to be inserted.
- * @param header Pointer to the page header.
- * @param offset Place where key is to be inserted.
- */
 void AM_AddtoIntPage(char *pageBuf, char *value, int pageNum, AM_INTHEADER *header, int offset)
 {
 	int recSize;
@@ -228,15 +199,6 @@ void AM_AddtoIntPage(char *pageBuf, char *value, int pageNum, AM_INTHEADER *head
 	header->numKeys++;
 }
 
-/**
- * @brief Fills the header and inserts a key into a new root.
- * @param pageBuf Buffer to new root.
- * @param pageNum1 Page number of the first child.
- * @param pageNum2 Page number of the second child.
- * @param value Attribute value to be inserted.
- * @param attrLength Attribute length.
- * @param maxKeys Maximum keys in a node.
- */
 void AM_FillRootPage(char *pageBuf, int pageNum1, int pageNum2, char *value, short attrLength, short maxKeys)
 {
 	AM_INTHEADER temphead, *tempheader;
@@ -254,16 +216,6 @@ void AM_FillRootPage(char *pageBuf, int pageNum1, int pageNum2, char *value, sho
 	AM_bcopy((char *)tempheader, pageBuf, AM_sint);
 }
 
-/**
- * @brief Splits an internal node.
- * @param pageBuf Internal node to be split.
- * @param pbuf1 Buffer for the first half.
- * @param pbuf2 Buffer for the second half.
- * @param header Pointer to the page header.
- * @param value Pointer to key to be added and to be returned to parent.
- * @param pageNum Page number of the child.
- * @param offset Offset where key is to be inserted.
- */
 void AM_SplitIntNode(char *pageBuf, char *pbuf1, char *pbuf2, AM_INTHEADER *header, char *value, int pageNum, int offset)
 {
 	AM_INTHEADER temphead, *tempheader;
@@ -312,12 +264,6 @@ void AM_SplitIntNode(char *pageBuf, char *pbuf1, char *pbuf2, AM_INTHEADER *head
 	AM_bcopy((char *)tempheader, pbuf2, AM_sint);
 }
 
-/**
- * @brief A non-standard memory copy function.
- * @param s1 Source buffer.
- * @param s2 Destination buffer.
- * @param nbytes Number of bytes to copy.
- */
 void AM_bcopy(char *s1, char *s2, int nbytes)
 {
 	memcpy(s2, s1, nbytes);

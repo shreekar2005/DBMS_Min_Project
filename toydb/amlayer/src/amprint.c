@@ -8,11 +8,6 @@
 #include "am.h"
 #include "../../pflayer/include/pf.h"
 
-/**
- * @brief Prints the contents of an internal node.
- * @param pageBuf Buffer containing the internal node page.
- * @param attrType Attribute type ('c', 'i', 'f').
- */
 void AM_PrintIntNode(char *pageBuf, char attrType)
 {
 	int tempPageint;
@@ -38,11 +33,6 @@ void AM_PrintIntNode(char *pageBuf, char attrType)
 	free(header);
 }
 
-/**
- * @brief Prints the contents of a leaf node.
- * @param pageBuf Buffer containing the leaf node page.
- * @param attrType Attribute type ('c', 'i', 'f').
- */
 void AM_PrintLeafNode(char *pageBuf, char attrType)
 {
 	short nextRec;
@@ -74,13 +64,6 @@ void AM_PrintLeafNode(char *pageBuf, char attrType)
 	free(header);
 }
 
-/**
- * @brief Dumps all leaf pages starting from a minimum value.
- * @param fileDesc File descriptor.
- * @param min Minimum value to start from (not fully implemented in original).
- * @param attrType Attribute type.
- * @param attrLength Attribute length.
- */
 void AM_DumpLeafPages(int fileDesc, int min, char attrType, int attrLength)
 {
 	int pageNum;
@@ -111,11 +94,6 @@ void AM_DumpLeafPages(int fileDesc, int min, char attrType, int attrLength)
 	free(header);
 }
 
-/**
- * @brief Prints the keys from a leaf page.
- * @param pageBuf Buffer containing the leaf page.
- * @param attrType Attribute type.
- */
 void AM_PrintLeafKeys(char *pageBuf, char attrType)
 {
 	short nextRec;
@@ -143,12 +121,6 @@ void AM_PrintLeafKeys(char *pageBuf, char attrType)
 	free(header);
 }
 
-/**
- * @brief Prints an attribute value based on its type.
- * @param bufPtr Pointer to the attribute data.
- * @param attrType Attribute type.
- * @param attrLength Attribute length.
- */
 void AM_PrintAttr(char *bufPtr, char attrType, int attrLength)
 {
 	int bufint;
@@ -181,12 +153,6 @@ void AM_PrintAttr(char *bufPtr, char attrType, int attrLength)
 	}
 }
 
-/**
- * @brief Recursively prints the B+ tree structure.
- * @param fileDesc File descriptor.
- * @param pageNum Page number of the current node to print.
- * @param attrType Attribute type.
- */
 void AM_PrintTree(int fileDesc, int pageNum, char attrType)
 {
 	int nextPage;

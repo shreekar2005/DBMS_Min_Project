@@ -10,11 +10,6 @@
 #include "testam.h"
 #include "am.h"
 
-/**
- * @brief Pads the end of a string with '\\0' up to a given length.
- * @param str The string to pad.
- * @param length The total desired length.
- */
 void padstring(char *str, int length)
 {
 	int i;
@@ -23,9 +18,6 @@ void padstring(char *str, int length)
 		str[i] = '\0';
 }
 
-/**
- * @brief Wrapper for AM_CreateIndex that exits on failure.
- */
 int xAM_CreateIndex(char *fname, int indexno, char attrtype, int attrlen)
 {
 	int errval;
@@ -42,9 +34,6 @@ int xAM_CreateIndex(char *fname, int indexno, char attrtype, int attrlen)
 	return (errval);
 }
 
-/**
- * @brief Wrapper for AM_DestroyIndex that exits on failure.
- */
 int xAM_DestroyIndex(char *fname, int indexno)
 {
 	int errval;
@@ -57,9 +46,6 @@ int xAM_DestroyIndex(char *fname, int indexno)
 	return (errval);
 }
 
-/**
- * @brief Wrapper for AM_InsertEntry that exits on failure.
- */
 int xAM_InsertEntry(int fd, char attrtype, int attrlen, char *val, RecIdType recid)
 {
 	int errval;
@@ -73,9 +59,6 @@ int xAM_InsertEntry(int fd, char attrtype, int attrlen, char *val, RecIdType rec
 	return (errval);
 }
 
-/**
- * @brief Wrapper for AM_DeleteEntry that exits on failure.
- */
 int xAM_DeleteEntry(int fd, char attrtype, int attrlen, char *val, RecIdType recid)
 {
 	int errval;
@@ -89,9 +72,6 @@ int xAM_DeleteEntry(int fd, char attrtype, int attrlen, char *val, RecIdType rec
 	return (errval);
 }
 
-/**
- * @brief Wrapper for AM_OpenIndexScan that exits on failure.
- */
 int xAM_OpenIndexScan(int fd, char attrtype, int attrlen, int op, char *val)
 {
 	int sd;
@@ -105,9 +85,6 @@ int xAM_OpenIndexScan(int fd, char attrtype, int attrlen, int op, char *val)
 	return (sd);
 }
 
-/**
- * @brief Wrapper for AM_FindNextEntry that exits on failure.
- */
 RecIdType xAM_FindNextEntry(int sd)
 {
 	int errval;
@@ -122,9 +99,6 @@ RecIdType xAM_FindNextEntry(int sd)
 	return (recid);
 }
 
-/**
- * @brief Wrapper for AM_CloseIndexScan that exits on failure.
- */
 int xAM_CloseIndexScan(int sd)
 {
 	int errval;
@@ -137,9 +111,6 @@ int xAM_CloseIndexScan(int sd)
 	return (errval);
 }
 
-/**
- * @brief Wrapper for PF_OpenFile that exits on failure.
- */
 int xPF_OpenFile(char *fname)
 {
 	int errval;
@@ -152,9 +123,6 @@ int xPF_OpenFile(char *fname)
 	return (errval);
 }
 
-/**
- * @brief Wrapper for PF_CloseFile that exits on failure.
- */
 int xPF_CloseFile(int fd)
 {
 	int errval;

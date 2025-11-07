@@ -27,15 +27,6 @@ static struct
 	int status;
 } AM_scanTable[MAXSCANS];
 
-/**
- * @brief Opens an index scan.
- * @param fileDesc File Descriptor.
- * @param attrType 'i' or 'c' or 'f'.
- * @param attrLength 4 for 'i' or 'f', 1-255 for 'c'.
- * @param op Operator for comparison.
- * @param value Value for comparison.
- * @return A scan descriptor on success, or an error code.
- */
 int AM_OpenIndexScan(int fileDesc, char attrType, int attrLength, int op, char *value)
 {
 	int scanDesc;				 /* index into scan table */
@@ -283,11 +274,6 @@ int AM_OpenIndexScan(int fileDesc, char attrType, int attrLength, int op, char *
 	return (scanDesc);
 }
 
-/**
- * @brief Returns the record id of the next record that satisfies the conditions.
- * @param scanDesc Index scan descriptor.
- * @return The record ID, or an error code.
- */
 int AM_FindNextEntry(int scanDesc)
 {
 	int recId;					 /* recordId to be returned */
@@ -465,11 +451,6 @@ int AM_FindNextEntry(int scanDesc)
 	return (recId);
 }
 
-/**
- * @brief Terminates an index scan.
- * @param scanDesc Scan Descriptor.
- * @return AME_OK on success, or an error code.
- */
 int AM_CloseIndexScan(int scanDesc)
 {
 	if ((scanDesc < 0) || (scanDesc > MAXSCANS - 1))
@@ -481,11 +462,6 @@ int AM_CloseIndexScan(int scanDesc)
 	return (AME_OK);
 }
 
-/**
- * @brief Gets the page number of the leftmost leaf.
- * @param fileDesc File descriptor.
- * @return The page number of the leftmost leaf.
- */
 int GetLeftPageNum(int fileDesc)
 {
 	char *pageBuf;

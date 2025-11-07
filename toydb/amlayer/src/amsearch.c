@@ -7,21 +7,6 @@
 #include "am.h"
 #include "../../pflayer/include/pf.h"
 
-/**
- * @brief Searches for a key in a B+ tree.
- *
- * Returns FOUND or NOTFOUND and returns the pagenumber and the offset
- * where key is present or could be inserted.
- *
- * @param fileDesc File descriptor.
- * @param attrType Attribute type.
- * @param attrLength Attribute length.
- * @param value Value to search for.
- * @param pageNum Output: page number of page where key is present or can be inserted.
- * @param pageBuf Output: pointer to buffer in memory where leaf page can be found.
- * @param indexPtr Output: pointer to index in leaf where key is present or can be inserted.
- * @return AM_FOUND or AM_NOT_FOUND, or an error code.
- */
 int AM_Search(int fileDesc, char attrType, int attrLength, char *value, int *pageNum, char **pageBuf, int *indexPtr)
 {
 	int errVal;
@@ -89,16 +74,6 @@ int AM_Search(int fileDesc, char attrType, int attrLength, char *value, int *pag
 	return (AM_SearchLeaf(*pageBuf, attrType, attrLength, value, indexPtr, lheader));
 }
 
-/**
- * @brief Finds the place (index) from where the next page to be followed is got.
- * @param pageBuf Buffer where the page is found.
- * @param attrType Attribute type.
- * @param attrLength Attribute length.
- * @param value Attribute value for which search is called.
- * @param indexPtr Output: index of the child pointer to follow.
- * @param header Pointer to the internal page header.
- * @return Page number of the child node to follow.
- */
 int AM_BinSearch(char *pageBuf, char attrType, int attrLength, char *value, int *indexPtr, AM_INTHEADER *header)
 {
 	int low, high, mid; /* for binary search */
@@ -175,16 +150,6 @@ int AM_BinSearch(char *pageBuf, char attrType, int attrLength, char *value, int 
 	return 0; /* Should not happen */
 }
 
-/**
- * @brief Search a leaf node for the key.
- * @param pageBuf Buffer where the leaf page resides.
- * @param attrType Attribute type.
- * @param attrLength Attribute length.
- * @param value Attribute value to be compared with.
- * @param indexPtr Output: pointer to the index where key is found or can be inserted.
- * @param header Pointer to the leaf page header.
- * @return AM_FOUND or AM_NOT_FOUND.
- */
 int AM_SearchLeaf(char *pageBuf, char attrType, int attrLength, char *value, int *indexPtr, AM_LEAFHEADER *header)
 {
 	int low, high, mid; /* for binary search */
@@ -280,14 +245,6 @@ int AM_SearchLeaf(char *pageBuf, char attrType, int attrLength, char *value, int
 	return 0; /* Should not happen */
 }
 
-/**
- * @brief Compare value in bufPtr with value in valPtr.
- * @param bufPtr Pointer to the first value.
- * @param attrType Attribute type.
- * @param attrLength Attribute length.
- * @param valPtr Pointer to the second value.
- * @return -1, 0, or 1 if valPtr is less than, equal to, or greater than bufPtr.
- */
 int AM_Compare(char *bufPtr, char attrType, int attrLength, char *valPtr)
 {
 	int bufint, valint;		  /* temporary aligned storage for comparison */

@@ -7,16 +7,6 @@
 #include "am.h"
 #include "../../pflayer/include/pf.h"
 
-/**
- * @brief Inserts a key into a leaf node.
- * @param pageBuf Buffer where the leaf page resides.
- * @param attrLength Length of the attribute.
- * @param value Attribute value to be inserted.
- * @param recId Recid of the attribute to be inserted.
- * @param index Index where key is to be inserted.
- * @param status Whether key is a new key or an old key.
- * @return TRUE if inserted, FALSE if split is needed, or an error code.
- */
 int AM_InsertintoLeaf(char *pageBuf, int attrLength, char *value, int recId, int index, int status)
 {
 	int recSize;
@@ -82,13 +72,6 @@ int AM_InsertintoLeaf(char *pageBuf, int attrLength, char *value, int recId, int
 				return (FALSE);
 }
 
-/**
- * @brief Insert into leaf given the fact that the key is old.
- * @param pageBuf Buffer for the leaf page.
- * @param recId Record ID to insert.
- * @param index Index where key is located.
- * @param header Pointer to the page header.
- */
 void AM_InsertToLeafFound(char *pageBuf, int recId, int index, AM_LEAFHEADER *header)
 {
 	int recSize;
@@ -121,14 +104,6 @@ void AM_InsertToLeafFound(char *pageBuf, int recId, int index, AM_LEAFHEADER *he
 	AM_bcopy((char *)&oldhead, pageBuf + tempPtr + AM_si, AM_ss);
 }
 
-/**
- * @brief Insert to a leaf given that the key is new.
- * @param pageBuf Buffer for the leaf page.
- * @param value New attribute value.
- * @param recId Record ID to insert.
- * @param index Index where key should be inserted.
- * @param header Pointer to the page header.
- */
 void AM_InsertToLeafNotFound(char *pageBuf, char *value, int recId, int index, AM_LEAFHEADER *header)
 {
 	int recSize;
@@ -154,14 +129,6 @@ void AM_InsertToLeafNotFound(char *pageBuf, char *value, int recId, int index, A
 	AM_InsertToLeafFound(pageBuf, recId, index, header);
 }
 
-/**
- * @brief Compacts all the recid's to the right so that there is enough space in the middle.
- * @param low Lower bound of keys to compact.
- * @param high Upper bound of keys to compact.
- * @param pageBuf Source page buffer.
- * @param tempPage Destination temporary page buffer.
- * @param header Pointer to the source page header.
- */
 void AM_Compact(int low, int high, char *pageBuf, char *tempPage, AM_LEAFHEADER *header)
 {
 	short nextRec;
