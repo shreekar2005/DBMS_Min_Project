@@ -155,9 +155,6 @@ static int PFwritefcn(int fd, int pagenum, PFfpage *buf)
 
 /************************* Interface Routines ****************************/
 
-/**
- * @brief Initialize the PF interface. Must be the first function called.
- */
 void PF_Init(void)
 {
 	int i;
@@ -241,11 +238,7 @@ int PF_DestroyFile(const char *fname)
 	return (PFE_OK);
 }
 
-/**
- * @brief Open the paged file whose name is fname.
- * @param fname Name of the file to open.
- * @return The file descriptor (>= 0) if no error, PF error codes otherwise.
- */
+
 int PF_OpenFile(const char *fname)
 {
 	int count; /* # of bytes in read */
@@ -293,11 +286,7 @@ int PF_OpenFile(const char *fname)
 	return (fd);
 }
 
-/**
- * @brief Close the file indexed by file descriptor fd.
- * @param fd File descriptor to close.
- * @return PFE_OK if OK, PF error code if error.
- */
+
 int PF_CloseFile(int fd)
 {
 	int error;
@@ -351,26 +340,14 @@ int PF_CloseFile(int fd)
 	return (PFE_OK);
 }
 
-/**
- * @brief Read the first page into memory and set *pagebuf to point to it.
- * @param fd File descriptor.
- * @param pagenum Page number of first page (output).
- * @param pagebuf Pointer to the pointer to buffer (output).
- * @return PFE_OK if no error, PFE_EOF if end of file reached.
- */
+
 int PF_GetFirstPage(int fd, int *pagenum, char **pagebuf)
 {
 	*pagenum = -1;
 	return (PF_GetNextPage(fd, pagenum, pagebuf));
 }
 
-/**
- * @brief Read the next valid page after *pagenum.
- * @param fd File descriptor of the file.
- * @param pagenum Old page number on input, new page number on output.
- * @param pagebuf Pointer to pointer to buffer of page data (output).
- * @return PFE_OK if success, PFE_EOF if end of file reached.
- */
+
 int PF_GetNextPage(int fd, int *pagenum, char **pagebuf)
 {
 	int temppage;	/* page number to scan for next valid page */
@@ -413,13 +390,7 @@ int PF_GetNextPage(int fd, int *pagenum, char **pagebuf)
 	return (PFerrno);
 }
 
-/**
- * @brief Read the page specified by "pagenum".
- * @param fd File descriptor.
- * @param pagenum Page number to read.
- * @param pagebuf Pointer to pointer to page data (output).
- * @return PFE_OK if no error.
- */
+
 int PF_GetThisPage(int fd, int pagenum, char **pagebuf)
 {
 	int error;
@@ -463,13 +434,7 @@ int PF_GetThisPage(int fd, int pagenum, char **pagebuf)
 	}
 }
 
-/**
- * @brief Allocate a new, empty page for file "fd".
- * @param fd File descriptor.
- * @param pagenum New page number (output).
- * @param pagebuf Pointer to pointer to page buffer (output).
- * @return PFE_OK if ok, PF error codes if not ok.
- */
+
 int PF_AllocPage(int fd, int *pagenum, char **pagebuf)
 {
 	PFfpage *fpage; /* pointer to file page */
@@ -521,12 +486,7 @@ int PF_AllocPage(int fd, int *pagenum, char **pagebuf)
 	return (PFE_OK);
 }
 
-/**
- * @brief Dispose the page numbered "pagenum" of the file "fd".
- * @param fd File descriptor.
- * @param pagenum Page number.
- * @return PFE_OK if no error, PF error code if error.
- */
+
 int PF_DisposePage(int fd, int pagenum)
 {
 	PFfpage *fpage; /* pointer to file page */
@@ -569,13 +529,7 @@ int PF_DisposePage(int fd, int pagenum)
 	return (PFbufUnfix(fd, pagenum, TRUE));
 }
 
-/**
- * @brief Unfix a page in the buffer.
- * @param fd File descriptor.
- * @param pagenum Page number.
- * @param dirty TRUE if page has been modified.
- * @return PFE_OK if no error, PF error code if error.
- */
+
 int PF_UnfixPage(int fd, int pagenum, int dirty)
 {
 	if (PFinvalidFd(fd))
@@ -616,10 +570,7 @@ static char *PFerrormsg[] = {
 	"hash table entry not found",
 	"page already in hash table"};
 
-/**
- * @brief Write the string "s" onto stderr, then write the last error message from PF onto stderr.
- * @param s String to write.
- */
+
 void PF_PrintError(const char *s)
 {
 	fprintf(stderr, "%s", s);

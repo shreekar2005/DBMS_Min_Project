@@ -74,14 +74,16 @@ int PF_OpenFile(const char *fname);
 /**
  * @brief Close the file indexed by file descriptor fd.
  * @param fd File descriptor to close.
+ * @return PFE_OK if OK, PF error code if error.
  */
 int PF_CloseFile(int fd);
 
 /**
- * @brief Read the first page into memory.
+ * @brief Read the first page into memory and set *pagebuf to point to it.
  * @param fd File descriptor.
  * @param pagenum Page number of first page (output).
  * @param pagebuf Pointer to the pointer to buffer (output).
+ * @return PFE_OK if no error, PFE_EOF if end of file reached.
  */
 int PF_GetFirstPage(int fd, int *pagenum, char **pagebuf);
 
@@ -90,6 +92,7 @@ int PF_GetFirstPage(int fd, int *pagenum, char **pagebuf);
  * @param fd File descriptor of the file.
  * @param pagenum Old page number on input, new page number on output.
  * @param pagebuf Pointer to pointer to buffer of page data (output).
+ * @return PFE_OK if success, PFE_EOF if end of file reached.
  */
 int PF_GetNextPage(int fd, int *pagenum, char **pagebuf);
 
@@ -98,6 +101,7 @@ int PF_GetNextPage(int fd, int *pagenum, char **pagebuf);
  * @param fd File descriptor.
  * @param pagenum Page number to read.
  * @param pagebuf Pointer to pointer to page data (output).
+ * @return PFE_OK if no error.
  */
 int PF_GetThisPage(int fd, int pagenum, char **pagebuf);
 
@@ -106,6 +110,7 @@ int PF_GetThisPage(int fd, int pagenum, char **pagebuf);
  * @param fd File descriptor.
  * @param pagenum New page number (output).
  * @param pagebuf Pointer to pointer to page buffer (output).
+ * @return PFE_OK if ok, PF error codes if not ok.
  */
 int PF_AllocPage(int fd, int *pagenum, char **pagebuf);
 
@@ -113,6 +118,7 @@ int PF_AllocPage(int fd, int *pagenum, char **pagebuf);
  * @brief Dispose the page numbered "pagenum" of the file "fd".
  * @param fd File descriptor.
  * @param pagenum Page number.
+ * @return PFE_OK if no error, PF error code if error.
  */
 int PF_DisposePage(int fd, int pagenum);
 
@@ -121,12 +127,13 @@ int PF_DisposePage(int fd, int pagenum);
  * @param fd File descriptor.
  * @param pagenum Page number.
  * @param dirty TRUE if page has been modified.
+ * @return PFE_OK if no error, PF error code if error.
  */
 int PF_UnfixPage(int fd, int pagenum, int dirty);
 
 /**
- * @brief Print the last PF error message.
- * @param s String to print before the error message.
+ * @brief Write the string "s" onto stderr, then write the last error message from PF onto stderr.
+ * @param s String to write.
  */
 void PF_PrintError(const char *s);
 

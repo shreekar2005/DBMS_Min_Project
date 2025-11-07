@@ -35,10 +35,7 @@ static Slot *getSlots(char *pagePtr)
 
 // --- Implementation of our functions ---
 
-/**
- * @brief Format a new, blank page as an empty slotted page.
- * @param pagePtr Pointer to the page buffer.
- */
+
 void SP_InitPage(char *pagePtr)
 {
     PageHeader *header = getHeader(pagePtr);
@@ -46,11 +43,7 @@ void SP_InitPage(char *pagePtr)
     header->freeSpacePtr = PF_PAGE_SIZE; // Free space starts at the very end
 }
 
-/**
- * @brief Returns the amount of free space left on the page.
- * @param pagePtr Pointer to the page buffer.
- * @return The amount of free space in bytes.
- */
+
 int SP_GetFreeSpace(char *pagePtr)
 {
     PageHeader *header = getHeader(pagePtr);
@@ -64,13 +57,7 @@ int SP_GetFreeSpace(char *pagePtr)
     return (freeSpaceEnd - freeSpaceStart);
 }
 
-/**
- * @brief Tries to insert a new record onto the page.
- * @param pagePtr Pointer to the page buffer.
- * @param record Pointer to the record data to insert.
- * @param recLen Length of the record.
- * @return The slotID if successful, or an error code otherwise.
- */
+
 int SP_InsertRecord(char *pagePtr, char *record, int recLen)
 {
     PageHeader *header = getHeader(pagePtr);
@@ -106,12 +93,7 @@ int SP_InsertRecord(char *pagePtr, char *record, int recLen)
     return newSlotID; // Return the new slot number
 }
 
-/**
- * @brief Deletes a record from a given slot.
- * @param pagePtr Pointer to the page buffer.
- * @param slotID The ID of the slot to delete.
- * @return SPE_OK on success, or an error code.
- */
+
 int SP_DeleteRecord(char *pagePtr, int slotID)
 {
     PageHeader *header = getHeader(pagePtr);
@@ -136,14 +118,7 @@ int SP_DeleteRecord(char *pagePtr, int slotID)
     return SPE_OK;
 }
 
-/**
- * @brief Gets a *pointer* to the record data in the given slot.
- * @param pagePtr Pointer to the page buffer.
- * @param slotID The ID of the slot to retrieve.
- * @param record Output: Pointer to the record data within the page buffer.
- * @param recLen Output: Length of the record.
- * @return SPE_OK on success, or an error code.
- */
+
 int SP_GetRecord(char *pagePtr, int slotID, char **record, int *recLen)
 {
     PageHeader *header = getHeader(pagePtr);
@@ -169,15 +144,7 @@ int SP_GetRecord(char *pagePtr, int slotID, char **record, int *recLen)
     return SPE_OK;
 }
 
-/**
- * @brief Finds the next valid slotID *after* the one given. Used for scanning.
- * @param pagePtr Pointer to the page buffer.
- * @param slotID Input: The current slot ID. Call with *slotID = -1 to start.
- *               Output: The next valid slot ID.
- * @param record Output: Pointer to the record data.
- * @param recLen Output: Length of the record.
- * @return SPE_OK on success, SPE_INVALID_SLOT if no more records.
- */
+
 int SP_GetNextRecord(char *pagePtr, int *slotID, char **record, int *recLen)
 {
     PageHeader *header = getHeader(pagePtr);
