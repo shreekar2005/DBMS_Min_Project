@@ -19,8 +19,8 @@ int main() {
     PF_Init();
 
     // 2. Create a test file
-    printf("Creating test file 'test_sp_file.db'...\n");
-    err = PF_CreateFile("test_sp_file.db");
+    printf("Creating test file 'test_sp_file.tdb'...\n");
+    err = PF_CreateFile("test_sp_file.tdb");
     if (err != PFE_OK) { 
         PF_PrintError("Error: PF_CreateFile"); 
         // If it says "File exists", just run 'rm test_sp_file.db' and try again
@@ -28,7 +28,7 @@ int main() {
     }
 
     // 3. Open the test file (Corrected call)
-    fd = PF_OpenFile("test_sp_file.db");
+    fd = PF_OpenFile("test_sp_file.tdb");
     if (fd < 0) { 
         PF_PrintError("Error: PF_OpenFile"); 
         return 1; 
@@ -141,7 +141,7 @@ int main() {
         return 1; 
     }
     
-    err = PF_DestroyFile("test_sp_file.db");
+    err = PF_DestroyFile("test_sp_file.tdb");
     if (err != PFE_OK) { 
         PF_PrintError("Error: PF_DestroyFile"); 
         return 1; 
