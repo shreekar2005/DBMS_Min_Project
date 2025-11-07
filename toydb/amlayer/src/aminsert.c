@@ -4,7 +4,7 @@
  */
 
 #include <stdio.h>
-#include "am.h"
+#include "../include/am.h"
 #include "../../pflayer/include/pf.h"
 
 int AM_InsertintoLeaf(char *pageBuf, int attrLength, char *value, int recId, int index, int status)

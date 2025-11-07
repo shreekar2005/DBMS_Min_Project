@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include "../../pflayer/include/pf.h"
-#include "am.h"
+#include "../include/am.h"
 
 int AM_CreateIndex(char *fileName, int indexNo, char attrType, int attrLength)
 {

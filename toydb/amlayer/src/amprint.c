@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "am.h"
+#include "../include/am.h"
 #include "../../pflayer/include/pf.h"
 
 void AM_PrintIntNode(char *pageBuf, char attrType)

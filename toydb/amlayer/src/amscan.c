@@ -4,7 +4,7 @@
  */
 
 #include <stdio.h>
-#include "am.h"
+#include "../include/am.h"
 #include "../../pflayer/include/pf.h"
 
 /* The structure of the scan Table */

@@ -4,7 +4,7 @@
  */
 
 #include <stdio.h>
-#include "am.h"
+#include "../include/am.h"
 #include "../../pflayer/include/pf.h"
 
 int AM_Search(int fileDesc, char attrType, int attrLength, char *value, int *pageNum, char **pageBuf, int *indexPtr)

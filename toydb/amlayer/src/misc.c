@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../../pflayer/include/pf.h"
-#include "testam.h"
-#include "am.h"
+#include "../include/testam.h"
+#include "../include/am.h"
 
 void padstring(char *str, int length)
 {

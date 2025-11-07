@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "am.h"
+#include "../include/am.h"
 #include "../../pflayer/include/pf.h"
 
 int AM_SplitLeaf(int fileDesc, char *pageBuf, int *pageNum, int attrLength, int recId, char *value, int status, int index, char *key)

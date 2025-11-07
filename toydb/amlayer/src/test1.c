@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "am.h"
+#include "../include/am.h"
 #include "testam.h"
 
 #define MAXRECS 50

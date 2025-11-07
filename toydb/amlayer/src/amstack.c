@@ -4,7 +4,7 @@
  */
 
 #include <stdio.h>
-#include "am.h"
+#include "../include/am.h"
 #include "../../pflayer/include/pf.h"
 
 #define AM_MAXSTACK 50

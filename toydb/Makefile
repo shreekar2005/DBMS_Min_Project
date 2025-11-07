@@ -1,15 +1,15 @@
 CC = cc
-CFLAGS = -g -I./amlayer/header -I./pflayer/include
-LDFLAGS = -g
+CFLAGS = -g
 
 AMLAYER_OBJ = amlayer/build/amlayer.o
 PFLAYER_OBJ = pflayer/build/pflayer.o
 
 TARGET = toydb.out
 
-.PHONY: all test clean
+.PHONY: run clean
 
-all: $(PFLAYER_OBJ) $(AMLAYER_OBJ)
+test: $(TARGET)
+	./$(TARGET)
 
 $(PFLAYER_OBJ):
 	$(MAKE) -C pflayer
@@ -17,16 +17,12 @@ $(PFLAYER_OBJ):
 $(AMLAYER_OBJ):
 	$(MAKE) -C amlayer
 
-test: $(TARGET)
-	./$(TARGET)
+$(TARGET): main.c $(AMLAYER_OBJ) $(PFLAYER_OBJ)
+	$(CC) $(CFLAGS) -o $(TARGET) main.c $(AMLAYER_OBJ) $(PFLAYER_OBJ)
 
-$(TARGET): main.o $(AMLAYER_OBJ) $(PFLAYER_OBJ)
-	$(CC) $(LDFLAGS) -o $(TARGET) main.o $(AMLAYER_OBJ) $(PFLAYER_OBJ)
-
-main.o: main.c amlayer/header/am.h amlayer/header/testam.h pflayer/include/pf.h
-	$(CC) $(CFLAGS) -c main.c -o main.o
-
+clear: clean
+	clear
 clean:
 	$(MAKE) -C pflayer clean
 	$(MAKE) -C amlayer clean
-	rm -f *.o $(TARGET) amlayer/testrel.* pflayer/file1 pflayer/file2
+	rm -f $(TARGET)

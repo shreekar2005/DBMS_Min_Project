@@ -6,9 +6,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "am.h"
-#include "../../pflayer/include/pf.h"
-#include "testam.h"
+#include "amlayer/include/am.h"
+#include "amlayer/include/testam.h"
+#include "pflayer/include/pf.h"
 
 #define MAXRECS	512	/* max # of records to insert */
 #define FNAME_LENGTH 80	/* file name size */

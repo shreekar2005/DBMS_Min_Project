@@ -168,11 +168,7 @@ void PF_Init(void)
 	}
 }
 
-/**
- * @brief Create a paged file called "fname". The file should not have already existed before.
- * @param fname Name of file to create.
- * @return PFE_OK if OK, PF error code if error.
- */
+
 int PF_CreateFile(const char *fname)
 {
 	int fd;		   /* unix file descripotr */
@@ -211,11 +207,7 @@ int PF_CreateFile(const char *fname)
 	return (PFE_OK);
 }
 
-/**
- * @brief Destroy the paged file whose name is "fname". The file should exist, and should not be already open.
- * @param fname File name to destroy.
- * @return PFE_OK if success, PF error codes if error.
- */
+
 int PF_DestroyFile(const char *fname)
 {
 	int error;
