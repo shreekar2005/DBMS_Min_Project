@@ -1,57 +1,50 @@
 CC = cc
-CFLAGS = -g -c
+CFLAGS = -g -I./header -I../pflayer/include
 LDFLAGS = -g
 
-OBJS = am.o amfns.o amsearch.o aminsert.o amstack.o amglobals.o main.o amscan.o amprint.o misc.o
+SRC_DIR = src
+BUILD_DIR = build
+HEADER_DIR = header
 
-PF_OBJ = ../pflayer/pflayer.o
+OBJS = $(BUILD_DIR)/am.o $(BUILD_DIR)/amfns.o $(BUILD_DIR)/amsearch.o $(BUILD_DIR)/aminsert.o $(BUILD_DIR)/amstack.o $(BUILD_DIR)/amglobals.o $(BUILD_DIR)/amscan.o $(BUILD_DIR)/amprint.o $(BUILD_DIR)/misc.o
 
-TARGET = a.out
+HDR = $(HEADER_DIR)/am.h $(HEADER_DIR)/testam.h
 
-$(TARGET): $(OBJS) $(PF_OBJ)
-	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJS) $(PF_OBJ)
+TARGET = $(BUILD_DIR)/amlayer.o
 
-amlayer.o : am.o amfns.o amsearch.o aminsert.o amstack.o amglobals.o amscan.o amprint.o
-	ld -r am.o amfns.o amsearch.o aminsert.o  amstack.o amglobals.o amscan.o amprint.o  -o amlayer.o
+.PHONY: all clean
 
-am.o : am.c am.h pf.h
-	$(CC) $(CFLAGS) am.c
+all: $(TARGET)
 
-amfns.o : amfns.c am.h pf.h
-	$(CC) $(CFLAGS) amfns.c
+$(TARGET): $(OBJS)
+	ld -r -o $(TARGET) $(OBJS)
 
-amsearch.o : amsearch.c am.h pf.h
-	$(CC) $(CFLAGS) amsearch.c
+$(BUILD_DIR)/am.o: $(SRC_DIR)/am.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-aminsert.o : aminsert.c am.h pf.h
-	$(CC) $(CFLAGS) aminsert.c
+$(BUILD_DIR)/amfns.o: $(SRC_DIR)/amfns.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-amscan.o : amscan.c am.h pf.h
-	$(CC) $(CFLAGS) amscan.c
+$(BUILD_DIR)/amsearch.o: $(SRC_DIR)/amsearch.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-amstack.o : amstack.c am.h pf.h
-	$(CC) $(CFLAGS) amstack.c
+$(BUILD_DIR)/aminsert.o: $(SRC_DIR)/aminsert.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-amglobals.o : amglobals.c am.h
-	$(CC) $(CFLAGS) amglobals.c
+$(BUILD_DIR)/amscan.o: $(SRC_DIR)/amscan.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-amprint.o : amprint.c am.h pf.h 
-	$(CC) $(CFLAGS) amprint.c
+$(BUILD_DIR)/amstack.o: $(SRC_DIR)/amstack.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-misc.o : misc.c am.h pf.h testam.h
-	$(CC) $(CFLAGS) misc.c
-    
-main.o : main.c am.h pf.h 
-	$(CC) $(CFLAGS) main.c
+$(BUILD_DIR)/amglobals.o: $(SRC_DIR)/amglobals.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/amprint.o: $(SRC_DIR)/amprint.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/misc.o: $(SRC_DIR)/misc.c $(HDR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o *.out $(TARGET) amlayer.o
-
-loadtest1: test1.c
-	cp test1.c main.c
-loadtest2: test2.c
-	cp test2.c main.c
-loadtest3: test3.c
-	cp test3.c main.c
-
-.PHONY: clean loadtest1 loadtest2 loadtest3
+	rm -f $(BUILD_DIR)/*.o

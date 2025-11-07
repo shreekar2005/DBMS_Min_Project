@@ -1,25 +1,32 @@
-test: default
-	cd amlayer && ./a.out
-	
-default:
-	cd pflayer && make
-	cd amlayer && make 
+CC = cc
+CFLAGS = -g -I./amlayer/header -I./pflayer/include
+LDFLAGS = -g
 
-pf:
-	cd pflayer && make
+AMLAYER_OBJ = amlayer/build/amlayer.o
+PFLAYER_OBJ = pflayer/build/pflayer.o
 
-am:
-	cd amlayer && make
+TARGET = a.out
 
-loadtest1:
-	cd amlayer && cp test1.c main.c
-loadtest2:
-	cd amlayer && cp test2.c main.c
-loadtest3:
-	cd amlayer && cp test3.c main.c
+.PHONY: all test clean
 
-clear : clean
-	clear
+all: $(PFLAYER_OBJ) $(AMLAYER_OBJ)
+
+$(PFLAYER_OBJ):
+	$(MAKE) -C pflayer
+
+$(AMLAYER_OBJ):
+	$(MAKE) -C amlayer
+
+test: $(TARGET)
+	./$(TARGET)
+
+$(TARGET): main.o $(AMLAYER_OBJ) $(PFLAYER_OBJ)
+	$(CC) $(LDFLAGS) -o $(TARGET) main.o $(AMLAYER_OBJ) $(PFLAYER_OBJ)
+
+main.o: main.c amlayer/header/am.h amlayer/header/testam.h pflayer/include/pf.h
+	$(CC) $(CFLAGS) -c main.c -o main.o
+
 clean:
-	cd amlayer && make clean
-	cd pflayer && make clean
+	$(MAKE) -C pflayer clean
+	$(MAKE) -C amlayer clean
+	rm -f *.o $(TARGET) amlayer/testrel.* pflayer/file1 pflayer/file2

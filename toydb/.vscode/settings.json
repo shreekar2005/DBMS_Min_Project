@@ -3,6 +3,7 @@
         "testam.h": "c",
         "am.h": "c",
         "stdio.h": "c",
-        "pftypes.h": "c"
+        "pftypes.h": "c",
+        "pf.h": "c"
     }
 }
