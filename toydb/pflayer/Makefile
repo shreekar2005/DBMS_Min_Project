@@ -27,7 +27,7 @@ TARGET = $(BUILD_DIR)/pflayer.o
 
 .PHONY: all clean tests
 
-all: $(TARGET)
+all: $(BUILD_DIR) $(TARGET)
 
 $(TARGET): $(LIB_OBJ)
 	ld -r -o $(TARGET) $(LIB_OBJ)
@@ -64,5 +64,8 @@ $(BUILD_DIR)/testpf.o: $(SRC_DIR)/testpf.c $(HDR)
 $(BUILD_DIR)/test_sp.o: $(SRC_DIR)/test_sp.c $(HDR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(BUILD_DIR):
+	mkdir -p $@
+
 clean:
-	rm -f $(BUILD_DIR)/*
+	rm -rf $(BUILD_DIR)

@@ -14,7 +14,7 @@ TARGET = $(BUILD_DIR)/amlayer.o
 
 .PHONY: all clean
 
-all: $(TARGET)
+all: $(BUILD_DIR) $(TARGET)
 
 $(TARGET): $(OBJS)
 	ld -r -o $(TARGET) $(OBJS)
@@ -46,5 +46,8 @@ $(BUILD_DIR)/amprint.o: $(SRC_DIR)/amprint.c $(HDR)
 $(BUILD_DIR)/misc.o: $(SRC_DIR)/misc.c $(HDR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(BUILD_DIR):
+	mkdir -p $@
+
 clean:
-	rm -f $(BUILD_DIR)/*.o
+	rm -rf $(BUILD_DIR)
