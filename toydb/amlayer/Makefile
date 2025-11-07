@@ -3,11 +3,8 @@ CFLAGS = -g
 
 SRC_DIR = src
 BUILD_DIR = build
-HEADER_DIR = header
 
 OBJS = $(BUILD_DIR)/am.o $(BUILD_DIR)/amfns.o $(BUILD_DIR)/amsearch.o $(BUILD_DIR)/aminsert.o $(BUILD_DIR)/amstack.o $(BUILD_DIR)/amglobals.o $(BUILD_DIR)/amscan.o $(BUILD_DIR)/amprint.o $(BUILD_DIR)/misc.o
-
-HDR = $(HEADER_DIR)/am.h $(HEADER_DIR)/testam.h
 
 TARGET = $(BUILD_DIR)/amlayer.o
 

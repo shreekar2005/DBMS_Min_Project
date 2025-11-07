@@ -5,8 +5,8 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "pf.h" // We need PF_PAGE_SIZE
-#include "sp.h" // Our new header
+#include "../../pflayer/include/pf.h" // We need PF_PAGE_SIZE
+#include "../include/sp.h" // Our new header
 
 /* Static function prototypes */
 static PageHeader *getHeader(char *pagePtr);

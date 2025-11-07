@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "pf.h"
-#include "pftypes.h"
+#include "../include/pf.h"
+#include "../include/pftypes.h"
 
 /**
  * @brief Main test function for the hash table.

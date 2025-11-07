@@ -5,8 +5,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "pf.h"
-#include "pftypes.h"
+#include "../include/pf.h"
+#include "../include/pftypes.h"
 
 /* hash table */
 static PFhash_entry *PFhashtbl[PF_HASH_TBL_SIZE];

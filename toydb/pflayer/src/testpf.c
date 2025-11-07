@@ -5,8 +5,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "pf.h"
-#include "pftypes.h"
+#include "../include/pf.h"
+#include "../include/pftypes.h"
 
 #define FILE1 "file1"
 #define FILE2 "file2"

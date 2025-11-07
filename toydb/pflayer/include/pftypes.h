@@ -6,7 +6,7 @@
 #ifndef PFTYPES_H
 #define PFTYPES_H
 
-#include "pf.h"
+#include "../include/pf.h"
 
 /**************************** File Page Decls *********************/
 

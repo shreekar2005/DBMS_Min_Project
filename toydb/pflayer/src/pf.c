@@ -10,8 +10,8 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <sys/file.h>
-#include "pf.h"
-#include "pftypes.h"
+#include "../include/pf.h"
+#include "../include/pftypes.h"
 
 /* To keep system V and PC users happy */
 #ifndef L_SET

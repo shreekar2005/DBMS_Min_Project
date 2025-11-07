@@ -8,8 +8,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "pf.h"
-#include "pftypes.h"
+#include "../include/pf.h"
+#include "../include/pftypes.h"
 
 static int PFnumbpage = 0;			 /**< # of buffer pages in memory */
 static PFbpage *PFfirstbpage = NULL; /**< ptr to first buffer page, or NULL */

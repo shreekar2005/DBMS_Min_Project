@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pf.h" // Paged File layer
-#include "sp.h" // Slotted Page header
+#include "../../pflayer/include/pf.h"
+#include "../include/sp.h" // Slotted Page header
 
 /**
  * @brief Main test function for the slotted page implementation.
