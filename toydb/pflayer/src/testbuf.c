@@ -5,15 +5,6 @@
  * This test creates a file with two parts:
  * 1. A small "hot set" of pages (like index pages) that are accessed randomly.
  * 2. A large "cold scan" of pages (like table data) that are accessed sequentially.
- *
- * We run this test with a buffer that is larger than the hot set,
- * but smaller than the total file.
- *
- * HYPOTHESIS:
- * - LRU: The cold scan will "pollute" the buffer, evicting the hot pages.
- * This will result in a LOW hit rate.
- * - MRU: The MRU strategy will evict the sequential scan pages, protecting
- * the hot set. This will result in a HIGH hit rate.
  */
 
 #include <stdio.h>
@@ -155,13 +146,14 @@ void runTest(void)
 int main(void)
 {
     int error;
-    printf("*** RUNNING TEST WITH LRU ***\n");
-    PF_Init(BUFFER_SIZE, STRATEGY_LRU);
     createFile();
+
+    printf("RUNNING TEST WITH LRU\n");
+    PF_Init(BUFFER_SIZE, STRATEGY_LRU);
     runTest();
     PF_PrintStats(); // Print stats for LRU
 
-    printf("*** RUNNING TEST WITH MRU ***\n");
+    printf("RUNNING TEST WITH MRU\n");
     PF_Init(BUFFER_SIZE, STRATEGY_MRU); // Re-init with new strategy
     runTest();
     PF_PrintStats(); // Print stats for MRU

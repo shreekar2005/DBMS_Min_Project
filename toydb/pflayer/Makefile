@@ -42,9 +42,9 @@ TEST_SRC_PF = $(SRC_DIR)/testpf.c
 TEST_OBJ_PF = $(BUILD_DIR)/testpf.o
 TEST_BIN_PF = $(BUILD_DIR)/testpf
 
-TEST_SRC_BUFFER = $(SRC_DIR)/testbuffer.c
-TEST_OBJ_BUFFER = $(BUILD_DIR)/testbuffer.o
-TEST_BIN_BUFFER = $(BUILD_DIR)/testbuffer
+TEST_SRC_BUFFER = $(SRC_DIR)/testbuf.c
+TEST_OBJ_BUFFER = $(BUILD_DIR)/testbuf.o
+TEST_BIN_BUFFER = $(BUILD_DIR)/testbuf
 
 testhash: $(BUILD_DIR) $(TEST_BIN_HASH)
 	$(TEST_BIN_HASH)
@@ -52,7 +52,7 @@ testhash: $(BUILD_DIR) $(TEST_BIN_HASH)
 testpf: $(BUILD_DIR) $(TEST_BIN_PF)
 	$(TEST_BIN_PF)
 
-testbuffer: $(BUILD_DIR) $(TEST_BIN_BUFFER)
+testbuf: $(BUILD_DIR) $(TEST_BIN_BUFFER)
 	$(TEST_BIN_BUFFER)
 
 $(TEST_BIN_HASH): $(TEST_OBJ_HASH) $(TARGET)
@@ -70,5 +70,5 @@ $(BUILD_DIR)/testpf.o: $(SRC_DIR)/testpf.c
 $(TEST_BIN_BUFFER) : $(TEST_OBJ_BUFFER) $(TARGET)
 	$(CC) $(CFLAGS) -o $@ $^
 
-$(BUILD_DIR)/testbuffer.o: $(SRC_DIR)/testbuffer.c
+$(BUILD_DIR)/testbuf.o: $(SRC_DIR)/testbuf.c
 	$(CC) $(CFLAGS) -c $< -o $@

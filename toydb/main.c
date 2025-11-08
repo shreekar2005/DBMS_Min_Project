@@ -1,25 +1,22 @@
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
-int main() {
-    pid_t pid;
+#include "pflayer/include/pf.h"
+#include "amlayer/include/am.h"
+#include "splayer/include/sp.h"
 
-    pid = fork();
+int main(int argc, char *argv[]) {
+    
+    printf("Starting ToyDB...\n");
 
-    if (pid < 0) {
-        fprintf(stderr, "Fork Failed\n");
-        return 1;
-    } else if (pid == 0) {
-        // This is the child process
-		execlp("make", "make", "am_test1", NULL);
-		perror("execlp failed"); 
-		exit(EXIT_FAILURE); 
-    } else {
-        wait(NULL);
-    }
+    // PF_Init(max_num_page_for_buffer, replacement_strat);
+    
+    printf("ToyDB is ready.\n");
+    printf("query loop....\n");
 
+    // query processor
+    
+    printf("ToyDB shutting down.\n");
+    
     return 0;
 }
