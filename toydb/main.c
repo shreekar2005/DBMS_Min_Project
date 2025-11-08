@@ -17,7 +17,6 @@ int main() {
 		execlp("make", "make", "am_test1", NULL);
 		perror("execlp failed"); 
 		exit(EXIT_FAILURE); 
-
     } else {
         wait(NULL);
     }

@@ -8,6 +8,10 @@
 
 #include "../include/pf.h"
 
+#define STRATEGY_LRU 0 /**LRU for Buffer manager */
+#define STRATEGY_MRU 1 /**MRU for Buffer manager */
+extern int PFmaxbpage;
+
 /**************************** File Page Decls *********************/
 
 /**
@@ -58,7 +62,7 @@ typedef struct PFftab_ele
 } PFftab_ele;
 
 /************************** Buffer Page Decls *********************/
-#define PF_MAX_BUFS 20 /**< max # of buffers */
+#define PF_DEFAULT_BUFS 20 /**< default max # of buffers */
 
 /**
  * @brief Buffer page declaration.
@@ -97,6 +101,7 @@ typedef struct PFhash_entry
 #define PFhash(fd, page) (((fd) + (page)) % PF_HASH_TBL_SIZE)
 
 /******************* Interface functions from Hash Table ****************/
+
 extern void PFhashInit(void);
 extern PFbpage *PFhashFind(int fd, int page);
 extern int PFhashInsert(int fd, int page, PFbpage *bpage);
@@ -104,11 +109,34 @@ extern int PFhashDelete(int fd, int page);
 extern void PFhashPrint(void);
 
 /****************** Interface functions from Buffer Manager *************/
+
 extern int PFbufGet(int fd, int pagenum, PFfpage **fpage, int (*readfcn)(int, int, PFfpage*), int (*writefcn)(int, int, PFfpage*));
 extern int PFbufUnfix(int fd, int pagenum, int dirty);
 extern int PFbufAlloc(int fd, int pagenum, PFfpage **fpage, int (*writefcn)(int, int, PFfpage*));
 extern int PFbufReleaseFile(int fd, int (*writefcn)(int, int, PFfpage*));
 extern int PFbufUsed(int fd, int pagenum);
 extern void PFbufPrint(void);
+
+/**
+ * @brief Set the maximum number of buffer pages.
+ * @param num_bufs The maximum number of buffer pages.
+ */
+extern void PFbufSetNumPages(int num_bufs);
+
+/**
+ * @brief Set the page replacement strategy.
+ * @param strategy The strategy (STRATEGY_LRU or STRATEGY_MRU).
+ */
+extern void PFbufSetStrategy(int strategy);
+
+/**
+ * @brief Resest statistics for logical reads, physical reads, number of hits
+ */
+extern void PF_ResetStats(void);
+
+/**
+ * @brief Print statistics for logical reads, physical reads, number of hits
+ */
+void PF_PrintStats(void);
 
 #endif /* PFTYPES_H */

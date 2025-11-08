@@ -2,6 +2,7 @@
  * @file pf.h
  * @brief Externs and error codes for the Paged File Interface.
  */
+#include "../include/pftypes.h" // (for PFbufSetNumPages)
 
 #ifndef PF_H
 #define PF_H
@@ -49,8 +50,10 @@ extern int PFerrno; /**< error number of last error */
 
 /**
  * @brief Initialize the PF interface.
+ * @param num_buffers Number of pages in buffer
+ * @param replacement_strategy Define page replacement strategy; 0:LRU, 1:MRU
  */
-void PF_Init(void);
+void PF_Init(int num_buffers, int replacement_strategy);
 
 /**
  * @brief Create a paged file called "fname". The file should not have already existed before.

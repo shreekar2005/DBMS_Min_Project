@@ -23,7 +23,7 @@ int main(void)
     printf("--- Slotted Page Test Program ---\n");
 
     // 1. Initialize the PF Layer
-    PF_Init();
+    PF_Init(20,0);
 
     // 2. Create a test file
     printf("Creating test file 'test_sp_file.tdb'...\n");

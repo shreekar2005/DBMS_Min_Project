@@ -26,7 +26,7 @@ int main(void)
 
 	int fd1, fd2;
 
-	PF_Init();
+	PF_Init(20,0);
 
 	/* create a few files */
 	if ((error = PF_CreateFile(FILE1)) != PFE_OK)
@@ -72,7 +72,7 @@ int main(void)
 
 	/* get rid of records  1, 3, 5, etc from file 1,
 	and 0,2,4,6 from file2 */
-	for (i = 0; i < PF_MAX_BUFS; i++)
+	for (i = 0; i < PFmaxbpage; i++)
 	{
 		if (i & 1)
 		{
@@ -159,7 +159,7 @@ int main(void)
 	}
 	printf("opened file2\n");
 
-	for (i = PF_MAX_BUFS; i < PF_MAX_BUFS * 2; i++)
+	for (i = PFmaxbpage; i < PFmaxbpage * 2; i++)
 	{
 		if ((error = PF_AllocPage(fd2, &pagenum, &buf)) != PFE_OK)
 		{
@@ -188,7 +188,7 @@ int main(void)
 		printf("alloc %d file1 page %d\n", i, pagenum);
 	}
 
-	for (i = PF_MAX_BUFS; i < PF_MAX_BUFS * 2; i++)
+	for (i = PFmaxbpage; i < PFmaxbpage * 2; i++)
 	{
 		if (i & 1)
 		{
@@ -211,7 +211,7 @@ int main(void)
 	}
 
 	printf("getting file2\n");
-	for (i = PF_MAX_BUFS; i < PF_MAX_BUFS * 2; i++)
+	for (i = PFmaxbpage; i < PFmaxbpage * 2; i++)
 	{
 		if (i & 1)
 		{
@@ -230,7 +230,7 @@ int main(void)
 	}
 
 	printf("getting file1\n");
-	for (i = PF_MAX_BUFS; i < PF_MAX_BUFS * 2; i++)
+	for (i = PFmaxbpage; i < PFmaxbpage * 2; i++)
 	{
 		if (!(i & 1))
 		{
@@ -255,7 +255,7 @@ int main(void)
 
 	/*put some more stuff into file1 */
 	printf("putting stuff into holes in fd1\n");
-	for (i = 0; i < (PF_MAX_BUFS / 2 - 1); i++)
+	for (i = 0; i < (PFmaxbpage / 2 - 1); i++)
 	{
 		if (PF_AllocPage(fd1, &pagenum, &buf) != PFE_OK)
 		{
@@ -366,6 +366,19 @@ int main(void)
 	printf("hash table:\n");
 	PFhashPrint();
 
+	/* destroy the two files */
+    printf("destroying file1 and file2\n");
+    if ((error = PF_DestroyFile(FILE1)) != PFE_OK)
+    {
+        PF_PrintError("destroy file1");
+        exit(1);
+    }
+    if ((error = PF_DestroyFile(FILE2)) != PFE_OK)
+    {
+        PF_PrintError("destroy file2");
+        exit(1);
+    }
+	
 	return 0;
 }
 
@@ -391,7 +404,7 @@ void writefile(const char *fname)
 	}
 	printf("opened %s\n", fname);
 
-	for (i = 0; i < PF_MAX_BUFS; i++)
+	for (i = 0; i < PFmaxbpage; i++)
 	{
 		if ((error = PF_AllocPage(fd, &pagenum, (char **)&buf)) != PFE_OK)
 		{
@@ -409,7 +422,7 @@ void writefile(const char *fname)
 	}
 
 	/* unfix these pages */
-	for (i = 0; i < PF_MAX_BUFS; i++)
+	for (i = 0; i < PFmaxbpage; i++)
 	{
 		if ((error = PF_UnfixPage(fd, i, TRUE)) != PFE_OK)
 		{

@@ -25,6 +25,8 @@ pf_testpf:
 	$(MAKE) -C pflayer testpf
 pf_testhash:
 	$(MAKE) -C pflayer testhash
+pf_testbuffer:
+	$(MAKE) -C pflayer testbuffer
 
 sp_testsp:
 	$(MAKE) -C splayer testsp

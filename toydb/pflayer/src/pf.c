@@ -155,17 +155,25 @@ static int PFwritefcn(int fd, int pagenum, PFfpage *buf)
 
 /************************* Interface Routines ****************************/
 
-void PF_Init(void)
+void PF_Init(int num_buffers, int replacement_strategy)
 {
-	int i;
-	/* init the hash table */
-	PFhashInit();
+    int i;
+    /* init the hash table */
+    PFhashInit();
 
-	/* init the file table to be not used*/
-	for (i = 0; i < PF_FTAB_SIZE; i++)
-	{
-		PFftab[i].fname = NULL;
-	}
+    /* init the file table to be not used*/
+    for (i = 0; i < PF_FTAB_SIZE; i++)
+    {
+        PFftab[i].fname = NULL;
+    }
+
+    /* Set the buffer pool size */
+    PFbufSetNumPages(num_buffers);
+
+	/* Set the replacement strategy */
+    PFbufSetStrategy(replacement_strategy);
+
+	PF_ResetStats();
 }
 
 

@@ -26,7 +26,7 @@ int main(void)
 
 	/* init */
 	printf("initializing\n");
-	PF_Init();
+	PF_Init(20,0);
 
 	/* create index on the both field of the record*/
 	printf("creating indices\n");
@@ -88,6 +88,7 @@ int main(void)
 	xAM_DestroyIndex(RELNAME, RECNAME_INDEXNO);
 	xAM_DestroyIndex(RELNAME, RECVAL_INDEXNO);
 
-	printf("test1 done!\n");
+	printf("test1 done! Here are results : \n");
+	PF_PrintStats();
 	return 0;
 }

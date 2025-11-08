@@ -25,7 +25,7 @@ int main(void)
 
 	/* init */
 	printf("initializing\n");
-	PF_Init();
+	PF_Init(20,0);
 
 	/* create index */
 	printf("creating index\n");
@@ -62,6 +62,7 @@ int main(void)
 	xPF_CloseFile(fd);
 	xAM_DestroyIndex(RELNAME, 0);
 
-	printf("test2 done!\n");
+	printf("test2 done! Here are results : \n");
+	PF_PrintStats();
 	return 0;
 }
