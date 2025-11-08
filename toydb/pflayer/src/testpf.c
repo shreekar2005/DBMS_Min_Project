@@ -16,9 +16,7 @@ void writefile(const char *fname);
 void readfile(const char *fname);
 void printfile(int fd);
 
-/**
- * @brief Main test function.
- */
+
 int main(void)
 {
 	int error;

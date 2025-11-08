@@ -12,9 +12,7 @@
 #define MAXRECS 50
 #define MAX_FNAME_LENGTH 80 /* max length for file name */
 
-/**
- * @brief Main function to test simple insertions and scans.
- */
+
 int main(void)
 {
 	int id0, id1; /* index descriptor */

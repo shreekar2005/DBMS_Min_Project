@@ -9,9 +9,7 @@
 #include "../include/pf.h"
 #include "../include/pftypes.h"
 
-/**
- * @brief Main test function for the hash table.
- */
+
 int main(void)
 {
 	int i;

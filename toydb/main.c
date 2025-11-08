@@ -1,163 +1,29 @@
-/**
- * @file main.c
- * @brief Test program for AM layer deletion and scan functionalities.
- * This is identical to test3.c
- */
-
 #include <stdio.h>
+#include <unistd.h> // For fork()
 #include <stdlib.h>
-#include "amlayer/include/am.h"
-#include "amlayer/include/testam.h"
-#include "pflayer/include/pf.h"
+#include <sys/types.h> // For pid_t
+#include <sys/wait.h> // For wait()
 
-#define MAXRECS	512	/* max # of records to insert */
-#define FNAME_LENGTH 80	/* file name size */
+int main() {
+    pid_t pid;
 
-/**
- * @brief Main function to test AM layer.
- */
-int main(void)
-{
-	int fd;	/* file descriptor for the index */
-	char fname[FNAME_LENGTH];	/* file name */
-	int recnum;	/* record number */
-	int sd;	/* scan descriptor */
-	int numrec;	/* # of records retrieved */
-	int testval;	
+    pid = fork();
 
-	/* init */
-	printf("initializing\n");
-	PF_Init();
+    if (pid < 0) {
+        fprintf(stderr, "Fork Failed\n");
+        return 1;
+    } else if (pid == 0) {
+        // This is the child process
+        // CORRECT
+		execlp("make", "make", "am_test1", NULL);
+		perror("execlp failed"); 
+		exit(EXIT_FAILURE); 
 
-	/* create index */
-	printf("creating index\n");
-	xAM_CreateIndex(RELNAME,0,INT_TYPE,sizeof(int));
+    } else {
+        printf("Parent process: My PID is %d, My child's PID is %d\n", getpid(), pid);
+        wait(NULL); // Parent waits for the child to complete
+        printf("Parent process: Child has finished execution.\n");
+    }
 
-	/* open the index */
-	printf("opening index\n");
-	sprintf(fname,"%s.0",RELNAME);
-	fd = xPF_OpenFile(fname);
-
-	/* first, make sure that simple deletions work */
-	printf("inserting into index\n");
-	for (recnum=0; recnum < 20; recnum++){
-		xAM_InsertEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-				IntToRecId(recnum));
-	}
-	printf("deleting odd number records\n");
-	for (recnum=1; recnum < 20; recnum += 2)
-		xAM_DeleteEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-					IntToRecId(recnum));
-
-	printf("retrieving even number records\n");
-	numrec= 0;
-	sd = xAM_OpenIndexScan(fd,INT_TYPE,sizeof(int),EQ_OP,NULL);
-	while((recnum=RecIdToInt(xAM_FindNextEntry(sd)))>= 0){
-		printf("%d\n",recnum);
-		numrec++;
-	}
-	printf("retrieved %d records\n",numrec);
-	xAM_CloseIndexScan(sd);
-
-	printf("deleting even number records\n");
-	for (recnum=0; recnum < 20; recnum += 2)
-		xAM_DeleteEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-					IntToRecId(recnum));
-
-	printf("retrieving from empty index\n");
-	numrec= 0;
-	sd = xAM_OpenIndexScan(fd,INT_TYPE,sizeof(int),EQ_OP,NULL);
-	while((recnum=RecIdToInt(xAM_FindNextEntry(sd)))>= 0){
-		printf("%d\n",recnum);
-		numrec++;
-	}
-	printf("retrieved %d records\n",numrec);
-	xAM_CloseIndexScan(sd);
-
-
-	/* insert into index */
-	printf("begin test of complex delete\n");
-	printf("inserting into index\n");
-	for (recnum=0; recnum < MAXRECS; recnum+=2){
-		xAM_InsertEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-				IntToRecId(recnum));
-	}
-	for (recnum=1; recnum < MAXRECS; recnum+=2)
-		xAM_InsertEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-				IntToRecId(recnum));
-
-	/* delete everything */
-	printf("deleting everything\n");
-	for (recnum=1; recnum < MAXRECS; recnum += 2)
-		xAM_DeleteEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-					IntToRecId(recnum));
-	for (recnum=0; recnum < MAXRECS; recnum +=2)
-		xAM_DeleteEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-					IntToRecId(recnum));
-
-
-	/* print out what remains */
-	printf("printing empty index\n");
-	numrec= 0;
-	sd = xAM_OpenIndexScan(fd,INT_TYPE,sizeof(int),EQ_OP,NULL);
-	while((recnum=RecIdToInt(xAM_FindNextEntry(sd)))>= 0){
-		printf("%d\n",recnum);
-		numrec++;
-	}
-	printf("retrieved %d records\n",numrec);
-	xAM_CloseIndexScan(sd);
-
-	/* insert everything back */
-	printf("inserting everything back\n");
-	for (recnum=0; recnum < MAXRECS; recnum++){
-		xAM_InsertEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-				IntToRecId(recnum));
-	}
-
-	/* delete records less than 100, using scan!! */
-	printf("delete records less than 100\n");
-	testval = 100;
-	sd = xAM_OpenIndexScan(fd,INT_TYPE,sizeof(int),LT_OP,(char *)&testval);
-	while((recnum=RecIdToInt(xAM_FindNextEntry(sd)))>= 0){
-		if (recnum >= 100){
-			printf("invalid recnum %d\n",recnum);
-			exit(1);
-		}
-		xAM_DeleteEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,IntToRecId
-					(recnum));
-	}
-	xAM_CloseIndexScan(sd);
-
-	/* delete records greater than 150, using scan */
-	printf("delete records greater than 150\n");
-	testval = 150;
-	sd = xAM_OpenIndexScan(fd,INT_TYPE,sizeof(int),GT_OP,(char *)&testval);
-	while((recnum=RecIdToInt(xAM_FindNextEntry(sd)))>= 0){
-		if (recnum <= 150){
-			printf("invalid recnum %d\n",recnum);
-			exit(1);
-		}
-		xAM_DeleteEntry(fd,INT_TYPE,sizeof(int),(char *)&recnum,
-					IntToRecId(recnum));
-	}
-	xAM_CloseIndexScan(sd);
-
-	/* print out what remains */
-	printf("printing between 100 and 150\n");
-	numrec= 0;
-	sd = xAM_OpenIndexScan(fd,INT_TYPE,sizeof(int),EQ_OP,NULL);
-	while((recnum=RecIdToInt(xAM_FindNextEntry(sd)))>= 0){
-		printf("%d\n",recnum);
-		numrec++;
-	}
-	printf("retrieved %d records\n",numrec);
-	xAM_CloseIndexScan(sd);
-
-	/* destroy everything */
-	printf("closing down\n");
-	xPF_CloseFile(fd);
-	xAM_DestroyIndex(RELNAME,0);
-
-	printf("test3 done!\n");
     return 0;
 }

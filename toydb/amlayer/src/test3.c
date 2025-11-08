@@ -12,9 +12,7 @@
 #define MAXRECS 512		/* max # of records to insert */
 #define FNAME_LENGTH 80 /* file name size */
 
-/**
- * @brief Main function to test deletion and scans.
- */
+
 int main(void)
 {
 	int fd;					  /* file descriptor for the index */

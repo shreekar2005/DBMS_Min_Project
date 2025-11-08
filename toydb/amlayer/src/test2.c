@@ -13,9 +13,7 @@
 #define MAXRECS 100		/* max # of records to insert */
 #define FNAME_LENGTH 80 /* file name size */
 
-/**
- * @brief Main function to test splitting.
- */
+
 int main(void)
 {
 	int fd;					  /* file descriptor for the index */

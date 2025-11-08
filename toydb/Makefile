@@ -8,17 +8,26 @@ TARGET = toydb.out
 
 .PHONY: run clear clean
 
-$(TARGET): main.c $(AMLAYER_OBJ) $(PFLAYER_OBJ)
-	$(CC) $(CFLAGS) -o $(TARGET) main.c $(AMLAYER_OBJ) $(PFLAYER_OBJ)
+$(TARGET): main.c
+	$(CC) $(CFLAGS) -o $(TARGET) main.c
 
 run: $(TARGET)
 	./$(TARGET)
 
-$(PFLAYER_OBJ):
-	$(MAKE) -C pflayer
+am_test1:
+	$(MAKE) -C amlayer test1
+am_test2:
+	$(MAKE) -C amlayer test2
+am_test3:
+	$(MAKE) -C amlayer test3
 
-$(AMLAYER_OBJ):
-	$(MAKE) -C amlayer
+pf_testpf:
+	$(MAKE) -C pflayer testpf
+pf_testhash:
+	$(MAKE) -C pflayer testhash
+
+sp_testsp:
+	$(MAKE) -C splayer testsp
 
 clear: clean
 	clear

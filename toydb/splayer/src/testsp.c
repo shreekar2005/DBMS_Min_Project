@@ -9,9 +9,7 @@
 #include "../../pflayer/include/pf.h"
 #include "../include/sp.h" // Slotted Page header
 
-/**
- * @brief Main test function for the slotted page implementation.
- */
+
 int main(void)
 {
     int fd;
