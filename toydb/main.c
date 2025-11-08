@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <unistd.h> // For fork()
+#include <unistd.h>
 #include <stdlib.h>
-#include <sys/types.h> // For pid_t
-#include <sys/wait.h> // For wait()
+#include <sys/types.h>
+#include <sys/wait.h>
 
 int main() {
     pid_t pid;
@@ -14,15 +14,12 @@ int main() {
         return 1;
     } else if (pid == 0) {
         // This is the child process
-        // CORRECT
 		execlp("make", "make", "am_test1", NULL);
 		perror("execlp failed"); 
 		exit(EXIT_FAILURE); 
 
     } else {
-        printf("Parent process: My PID is %d, My child's PID is %d\n", getpid(), pid);
-        wait(NULL); // Parent waits for the child to complete
-        printf("Parent process: Child has finished execution.\n");
+        wait(NULL);
     }
 
     return 0;
