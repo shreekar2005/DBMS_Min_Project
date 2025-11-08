@@ -1,4 +1,3 @@
-#include "../../pflayer/include/pf.h"
 /**
  * @file test1.c
  * @brief Tests simple index insertion and scans.
@@ -7,7 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/am.h"
-#include "testam.h"
+#include "../include/testam.h"
+#include "../../pflayer/include/pf.h"
 
 #define MAXRECS 50
 #define MAX_FNAME_LENGTH 80 /* max length for file name */

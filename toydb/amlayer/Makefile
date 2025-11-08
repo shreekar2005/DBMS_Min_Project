@@ -8,7 +8,7 @@ OBJS = $(BUILD_DIR)/am.o $(BUILD_DIR)/amfns.o $(BUILD_DIR)/amsearch.o $(BUILD_DI
 
 TARGET = $(BUILD_DIR)/amlayer.o
 
-.PHONY: all clean
+.PHONY: all clean test1 test2 test3
 
 all: $(BUILD_DIR) $(TARGET)
 
@@ -47,3 +47,50 @@ $(BUILD_DIR):
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+
+################################### TESTS #####################################
+
+PF_LAYER_OBJ = ../pflayer/build/pflayer.o
+
+$(PF_LAYER_OBJ):
+	$(MAKE) -C ../pflayer
+
+TEST_SRC_1 = $(SRC_DIR)/test1.c
+TEST_OBJ_1 = $(BUILD_DIR)/test1.o
+TEST_BIN_1 = $(BUILD_DIR)/test1
+
+TEST_SRC_2 = $(SRC_DIR)/test2.c
+TEST_OBJ_2 = $(BUILD_DIR)/test2.o
+TEST_BIN_2 = $(BUILD_DIR)/test2
+
+TEST_SRC_3 = $(SRC_DIR)/test3.c
+TEST_OBJ_3 = $(BUILD_DIR)/test3.o
+TEST_BIN_3 = $(BUILD_DIR)/test3
+
+test1: $(BUILD_DIR) $(TEST_BIN_1)
+	$(TEST_BIN_1)
+
+test2: $(BUILD_DIR) $(TEST_BIN_2)
+	$(TEST_BIN_2)
+
+test3: $(BUILD_DIR) $(TEST_BIN_3)
+	$(TEST_BIN_3)
+
+$(TEST_BIN_1): $(TEST_OBJ_1) $(TARGET) $(PF_LAYER_OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(TEST_OBJ_1): $(TEST_SRC_1)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TEST_BIN_2): $(TEST_OBJ_2) $(TARGET) $(PF_LAYER_OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(TEST_OBJ_2): $(TEST_SRC_2)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TEST_BIN_3): $(TEST_OBJ_3) $(TARGET) $(PF_LAYER_OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(TEST_OBJ_3): $(TEST_SRC_3)
+	$(CC) $(CFLAGS) -c $< -o $@

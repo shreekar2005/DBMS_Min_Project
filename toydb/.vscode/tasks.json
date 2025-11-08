@@ -4,8 +4,7 @@
         {
             "label": "build",
             "type": "shell",
-            // This runs the 'default' target from your parent Makefile
-            "command": "make",
+            "command": "make clear && make",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -14,7 +13,7 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "detail": "Runs 'make' in the root project folder."
+            "detail": "Runs 'make' in the root project folder (toydb)."
         }
     ]
 }

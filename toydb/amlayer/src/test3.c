@@ -1,4 +1,3 @@
-#include "../../pflayer/include/pf.h"
 /**
  * @file test3.c
  * @brief Tests deletion and scan.
@@ -7,7 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/am.h"
-#include "testam.h"
+#include "../include/testam.h"
+#include "../../pflayer/include/pf.h"
 
 #define MAXRECS 512		/* max # of records to insert */
 #define FNAME_LENGTH 80 /* file name size */

@@ -1,4 +1,3 @@
-#include "../../pflayer/include/pf.h"
 /**
  * @file test2.c
  * @brief Test insert and scan, forcing splitting of B+ tree pages.
@@ -7,7 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/am.h"
-#include "testam.h"
+#include "../include/testam.h"
+#include "../../pflayer/include/pf.h"
 
 #define STRING_SIZE 250 /* string */
 #define MAXRECS 100		/* max # of records to insert */
