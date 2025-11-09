@@ -2,7 +2,7 @@
  * @file pf.h
  * @brief Externs and error codes for the Paged File Interface.
  */
-#include "../include/pftypes.h" // (for PFbufSetNumPages)
+#include "../include/pftypes.h"
 
 #ifndef PF_H
 #define PF_H
@@ -38,8 +38,8 @@
 #define PFE_HASHNOTFOUND -18  /**< hash table entry not found */
 #define PFE_HASHPAGEEXIST -19 /**< page already exist in hash table */
 
-/* page size */
-#define PF_PAGE_SIZE 4096
+#define PF_PAGE_SIZE 4096 /**< Page size in bytes */
+#define PF_FTAB_SIZE 20 /**< size of open file table */
 
 /* externs from the PF layer */
 extern int PFerrno; /**< error number of last error */
@@ -49,9 +49,7 @@ extern long num_buffer_hits;
 extern long num_physical_reads;
 extern long num_physical_writes;
 
-/****************************************************************************
-                Page File Level Interface
-****************************************************************************/
+/******************************** Interface for outside PFlayer *******************************/
 
 /**
  * @brief Initialize the PF interface.
@@ -146,5 +144,15 @@ int PF_UnfixPage(int fd, int pagenum, int dirty);
  * @param s String to write.
  */
 void PF_PrintError(const char *s);
+
+/**
+ * @brief Resest statistics for logical reads, physical reads, number of hits
+ */
+void PF_ResetStats(void);
+
+/**
+ * @brief Print statistics for logical reads, physical reads, number of hits
+ */
+void PF_PrintStats(void);
 
 #endif /* PF_H */

@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h"
-
+#include "../include/hash.h"
 
 int main(void)
 {

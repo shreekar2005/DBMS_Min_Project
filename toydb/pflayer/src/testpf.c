@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h"
+#include "../include/buf.h"
+#include "../include/hash.h"
 
 #define FILE1 "file1"
 #define FILE2 "file2"

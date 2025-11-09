@@ -12,6 +12,7 @@
 #include <string.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h" 
+#include "../include/buf.h"
 
 #define TEST_FILE "buffertestfile"
 

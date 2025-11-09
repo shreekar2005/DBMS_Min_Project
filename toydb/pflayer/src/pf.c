@@ -12,6 +12,8 @@
 #include <sys/file.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h"
+#include "../include/hash.h"
+#include "../include/buf.h"
 
 /* To keep system V and PC users happy */
 #ifndef L_SET

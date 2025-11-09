@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h"
+#include "../include/buf.h"
+#include "../include/hash.h"
 
 int PFmaxbpage=DEFAULT_MAX_PAGE;
 
