@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "pflayer/include/pf.h"
 #include "amlayer/include/am.h"
@@ -12,6 +13,9 @@ int main(int argc, char *argv[]) {
     // PF_Init(max_num_page_for_buffer, replacement_strat);
     
     printf("ToyDB is ready.\n");
+
+    execlp("make", "make", "sp_testsp", NULL);
+    
     printf("query loop....\n");
 
     // query processor

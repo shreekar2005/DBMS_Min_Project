@@ -10,8 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/pf.h"      // Make sure this path is correct
-#include "../include/pftypes.h"  // Make sure this path is correct
+#include "../include/pf.h"
+#include "../include/pftypes.h" 
 
 #define TEST_FILE "buffertestfile"
 
@@ -23,7 +23,6 @@
 #define TOTAL_ACCESSES 10000
 #define HOT_ACCESS_PERCENTAGE 80 // 80% of accesses are to the hot set
 
-/* These must match pftypes.h (or your implementation) */
 #define STRATEGY_LRU 0
 #define STRATEGY_MRU 1
 

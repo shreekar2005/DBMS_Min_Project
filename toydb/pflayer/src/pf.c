@@ -19,6 +19,11 @@
 #endif
 
 int PFerrno = PFE_OK; /**< last error message */
+long num_logical_reads=0;
+long num_logical_writes=0;
+long num_buffer_hits=0;
+long num_physical_reads=0;
+long num_physical_writes=0;
 
 static PFftab_ele PFftab[PF_FTAB_SIZE]; /**< table of opened files */
 
@@ -580,4 +585,32 @@ void PF_PrintError(const char *s)
 		perror(" ");
 	else
 		fprintf(stderr, "\n");
+}
+
+
+void PF_PrintStats(void)
+{
+	printf("--- Buffer Manager Statistics ---\n");
+	printf("Logical Reads:    %ld\n", num_logical_reads);
+	printf("Logical Writes:   %ld\n", num_logical_writes);
+	printf("Buffer Hits:      %ld\n", num_buffer_hits);
+	printf("Physical Reads:   %ld\n", num_physical_reads);
+	printf("Physical Writes:  %ld\n", num_physical_writes);
+
+	long total_logical = num_logical_reads + num_logical_writes;
+	if (total_logical > 0)
+	{
+		double hit_rate = (double)num_buffer_hits / num_logical_reads;
+		printf("Hit Rate:         %.2f%%\n", hit_rate * 100.0);
+	}
+	printf("---\n");
+}
+
+void PF_ResetStats(void)
+{
+	num_logical_reads = 0;
+	num_logical_writes = 0;
+	num_buffer_hits = 0;
+	num_physical_reads = 0;
+	num_physical_writes = 0;
 }

@@ -33,8 +33,6 @@ static Slot *getSlots(char *pagePtr)
     return (Slot *)(pagePtr + sizeof(PageHeader));
 }
 
-// --- Implementation of our functions ---
-
 
 void SP_InitPage(char *pagePtr)
 {

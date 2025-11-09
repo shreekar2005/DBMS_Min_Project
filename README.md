@@ -8,7 +8,7 @@ The `toydb/` directory contains the core database source code, organized into th
 
   * **`toydb/pflayer` (Page File Layer):** The lowest layer, responsible for file I/O, managing pages on disk, and maintaining a buffer pool. It compiles into a single object file: `pflayer/build/pflayer.o`.
   * **`toydb/amlayer` (Access Method Layer):** The middle layer, built on top of the PF Layer. It implements the access methods for data (e.g., B+ Tree indexing) and handles record searching, insertion, and scanning. It compiles into `amlayer/build/amlayer.o`.
-  * **`toydb/splayer` (System Page Layer):** The top layer, which likely manages system-level data or catalog information.
+  * **`toydb/splayer` (Slotted Page Layer):** The layer on top of PF layer, which manages slotted pages.
 
 The root directory also contains:
 

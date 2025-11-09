@@ -11,41 +11,61 @@
 #include "../include/pf.h"
 #include "../include/pftypes.h"
 
+int PFmaxbpage=DEFAULT_MAX_PAGE;
+
 static int PFnumbpage = 0;			  /**< # of buffer pages in memory */
 static int PFstrategy = STRATEGY_LRU; /**< current buffer strategy */
 static PFbpage *PFfirstbpage = NULL;  /**< ptr to first buffer page, or NULL */
 static PFbpage *PFlastbpage = NULL;	  /**< ptr to last buffer page, or NULL */
 static PFbpage *PFfreebpage = NULL;	  /**< list of free buffer pages */
 
-int PFmaxbpage = PF_DEFAULT_BUFS;	  /**< max # of buffer pages */
-
-/*for statistics*/
-
-static long g_num_logical_reads = 0;
-static long g_num_logical_writes = 0;
-static long g_num_buffer_hits = 0;
-static long g_num_physical_reads = 0;
-static long g_num_physical_writes = 0;
-
-static void PFbufInsertFree(PFbpage *bpage);
-static void PFbufLinkHead(PFbpage *bpage);
-static void PFbufUnlink(PFbpage *bpage);
-static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage *));
-
 /**
  * @brief Insert the buffer page pointed by "bpage" into the free list.
  * @param bpage The buffer page to insert.
  */
+static void PFbufInsertFree(PFbpage *bpage);
+
+/**
+ * @brief Link the buffer page pointed by "bpage" as the head of the used buffer list.
+ * @param bpage Pointer to buffer page to be linked.
+ */
+static void PFbufLinkHead(PFbpage *bpage);
+
+/**
+ * @brief Unlink the page pointed by bpage from the buffer list.
+ *
+ * Assume that bpage is a valid pointer. Set the "prevpage" and "nextpage"
+ * fields to NULL. The caller is responsible to either place
+ * the unlinked page into the free list, or insert it back
+ * into the used list.
+ * @param bpage Buffer page to be unlinked from the used list.
+ */
+static void PFbufUnlink(PFbpage *bpage);
+
+/**
+ * @brief Allocate a buffer page.
+ *
+ * Allocate a buffer page and set *bpage to point to it. *bpage
+ * is set to NULL if one can not be allocated.
+ * The "nextpage" and "prevpage" fields of *bpage are linked as
+ * the head of the list of used buffers. All the other fields are undefined.
+ *
+ * @param bpage Pointer to pointer to buffer bpage to be allocated.
+ * @param writefcn Function to write pages.
+ * @return PFE_OK if no error, PFE_NOMEM if no memory, PFE_NOBUF if no buffer space.
+ */
+static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage *));
+
+
+/*************************************** Static Functions *********************************************/
+
 static void PFbufInsertFree(PFbpage *bpage)
 {
 	bpage->nextpage = PFfreebpage;
 	PFfreebpage = bpage;
 }
 
-/**
- * @brief Link the buffer page pointed by "bpage" as the head of the used buffer list.
- * @param bpage Pointer to buffer page to be linked.
- */
+
 static void PFbufLinkHead(PFbpage *bpage)
 {
 	bpage->nextpage = PFfirstbpage;
@@ -57,15 +77,7 @@ static void PFbufLinkHead(PFbpage *bpage)
 		PFlastbpage = bpage;
 }
 
-/**
- * @brief Unlink the page pointed by bpage from the buffer list.
- *
- * Assume that bpage is a valid pointer. Set the "prevpage" and "nextpage"
- * fields to NULL. The caller is responsible to either place
- * the unlinked page into the free list, or insert it back
- * into the used list.
- * @param bpage Buffer page to be unlinked from the used list.
- */
+
 static void PFbufUnlink(PFbpage *bpage)
 {
 	if (PFfirstbpage == bpage)
@@ -83,18 +95,7 @@ static void PFbufUnlink(PFbpage *bpage)
 	bpage->prevpage = bpage->nextpage = NULL;
 }
 
-/**
- * @brief Allocate a buffer page.
- *
- * Allocate a buffer page and set *bpage to point to it. *bpage
- * is set to NULL if one can not be allocated.
- * The "nextpage" and "prevpage" fields of *bpage are linked as
- * the head of the list of used buffers. All the other fields are undefined.
- *
- * @param bpage Pointer to pointer to buffer bpage to be allocated.
- * @param writefcn Function to write pages.
- * @return PFE_OK if no error, PFE_NOMEM if no memory, PFE_NOBUF if no buffer space.
- */
+
 static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage *))
 {
 	PFbpage *tbpage; /* temporary pointer to buffer page */
@@ -155,7 +156,7 @@ static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage
 
 		/* write out the dirty page */
 		if (tbpage->dirty)
-			g_num_physical_writes++;
+			num_physical_writes++;
 		if (tbpage->dirty && ((error = (*writefcn)(tbpage->fd,
 												   tbpage->page, &tbpage->fpage)) != PFE_OK))
 			return (error);
@@ -176,24 +177,12 @@ static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage
 	return (PFE_OK);
 }
 
-/************************* Interface to the Outside World ****************/
+/******************************* Interface to the Outside buf.c (these functions are used by pf.c) ****************/
 
-/**
- * @brief Get a page from the buffer.
- *
- * Get a page whose number is "pagenum" from the file pointed
- * by "fd". Set *fpage to point to the data for that page.
- *
- * @param fd File descriptor.
- * @param pagenum Page number.
- * @param fpage Pointer to pointer to file page.
- * @param readfcn Function to read a page.
- * @param writefcn Function to write a page.
- * @return PFE_OK if no error, PF error code if error.
- */
+
 int PFbufGet(int fd, int pagenum, PFfpage **fpage, int (*readfcn)(int, int, PFfpage *), int (*writefcn)(int, int, PFfpage *))
 {
-	g_num_logical_reads++;
+	num_logical_reads++;
 	PFbpage *bpage; /* pointer to buffer */
 	int error;
 
@@ -201,7 +190,7 @@ int PFbufGet(int fd, int pagenum, PFfpage **fpage, int (*readfcn)(int, int, PFfp
 	{
 		/* page not in buffer. */
 
-		g_num_physical_reads++;
+		num_physical_reads++;
 
 		/* allocate an empty page */
 		if ((error = PFbufInternalAlloc(&bpage, writefcn)) != PFE_OK)
@@ -240,7 +229,7 @@ int PFbufGet(int fd, int pagenum, PFfpage **fpage, int (*readfcn)(int, int, PFfp
 	else
 	{
 		/* Page IS in the buffer, so it's a hit */
-		g_num_buffer_hits++;
+		num_buffer_hits++;
 
 		if (bpage->fixed)
 		{
@@ -259,18 +248,7 @@ int PFbufGet(int fd, int pagenum, PFfpage **fpage, int (*readfcn)(int, int, PFfp
 	return (PFE_OK);
 }
 
-/**
- * @brief Unfix a page in the buffer.
- *
- * Unfix the file page whose number is "pagenum" from the buffer.
- * If dirty is TRUE, then mark the buffer as having been modified.
- * Otherwise, the dirty flag is left unchanged.
- *
- * @param fd File descriptor.
- * @param pagenum Page number.
- * @param dirty TRUE if page is dirty.
- * @return PFE_OK if no error, PF error codes if error occurs.
- */
+
 int PFbufUnfix(int fd, int pagenum, int dirty)
 {
 	PFbpage *bpage;
@@ -305,21 +283,10 @@ int PFbufUnfix(int fd, int pagenum, int dirty)
 	return (PFE_OK);
 }
 
-/**
- * @brief Allocate a buffer and mark it belonging to a page.
- *
- * Allocate a buffer and mark it belonging to page "pagenum"
- * of file "fd".  Set *fpage to point to the buffer data.
- *
- * @param fd File descriptor.
- * @param pagenum Page number.
- * @param fpage Pointer to file page.
- * @param writefcn Function to write out pages.
- * @return PFE_OK if successful, PF error codes if unsuccessful.
- */
+
 int PFbufAlloc(int fd, int pagenum, PFfpage **fpage, int (*writefcn)(int, int, PFfpage *))
 {
-	g_num_logical_writes++;
+	num_logical_writes++;
 	PFbpage *bpage;
 	int error;
 
@@ -356,16 +323,7 @@ int PFbufAlloc(int fd, int pagenum, PFfpage **fpage, int (*writefcn)(int, int, P
 	return (PFE_OK);
 }
 
-/**
- * @brief Release all pages of a file from the buffer.
- *
- * Release all pages of file "fd" from the buffer and
- * put them into the free list.
- *
- * @param fd File descriptor.
- * @param writefcn Function to write a page of file.
- * @return PFE_OK if no error, PF error code if error.
- */
+
 int PFbufReleaseFile(int fd, int (*writefcn)(int, int, PFfpage *))
 {
 	PFbpage *bpage; /* ptr to buffer pages to search */
@@ -386,7 +344,7 @@ int PFbufReleaseFile(int fd, int (*writefcn)(int, int, PFfpage *))
 			}
 
 			if (bpage->dirty)
-				g_num_physical_writes++;
+				num_physical_writes++;
 			/* write out dirty page */
 			if (bpage->dirty && ((error = (*writefcn)(fd, bpage->page,
 													  &bpage->fpage)) != PFE_OK))
@@ -414,17 +372,7 @@ int PFbufReleaseFile(int fd, int (*writefcn)(int, int, PFfpage *))
 	return (PFE_OK);
 }
 
-/**
- * @brief Mark a page as used.
- *
- * Mark page numbered "pagenum" of file descriptor "fd" as used.
- * The page must be fixed in the buffer. Make this page most
- * recently used.
- *
- * @param fd File descriptor.
- * @param pagenum Page number.
- * @return PF error codes.
- */
+
 int PFbufUsed(int fd, int pagenum)
 {
 	PFbpage *bpage; /* pointer to the bpage we are looking for */
@@ -454,9 +402,7 @@ int PFbufUsed(int fd, int pagenum)
 	return (PFE_OK);
 }
 
-/**
- * @brief Print the current page buffers.
- */
+
 void PFbufPrint(void)
 {
 	PFbpage *bpage;
@@ -482,31 +428,4 @@ void PFbufSetNumPages(int num_bufs)
 void PFbufSetStrategy(int strategy)
 {
 	PFstrategy = strategy;
-}
-
-void PF_ResetStats(void)
-{
-	g_num_logical_reads = 0;
-	g_num_logical_writes = 0;
-	g_num_buffer_hits = 0;
-	g_num_physical_reads = 0;
-	g_num_physical_writes = 0;
-}
-
-void PF_PrintStats(void)
-{
-	printf("--- Buffer Manager Statistics ---\n");
-	printf("Logical Reads:    %ld\n", g_num_logical_reads);
-	printf("Logical Writes:   %ld\n", g_num_logical_writes);
-	printf("Buffer Hits:      %ld\n", g_num_buffer_hits);
-	printf("Physical Reads:   %ld\n", g_num_physical_reads);
-	printf("Physical Writes:  %ld\n", g_num_physical_writes);
-
-	long total_logical = g_num_logical_reads + g_num_logical_writes;
-	if (total_logical > 0)
-	{
-		double hit_rate = (double)g_num_buffer_hits / g_num_logical_reads;
-		printf("Hit Rate:         %.2f%%\n", hit_rate * 100.0);
-	}
-	printf("---\n");
 }

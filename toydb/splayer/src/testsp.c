@@ -31,7 +31,6 @@ int main(void)
     if (err != PFE_OK)
     {
         PF_PrintError("Error: PF_CreateFile");
-        // If it says "File exists", just run 'rm test_sp_file.db' and try again
         return 1;
     }
 

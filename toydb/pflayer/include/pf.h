@@ -43,6 +43,11 @@
 
 /* externs from the PF layer */
 extern int PFerrno; /**< error number of last error */
+extern long num_logical_reads;
+extern long num_logical_writes;
+extern long num_buffer_hits;
+extern long num_physical_reads;
+extern long num_physical_writes;
 
 /****************************************************************************
                 Page File Level Interface
