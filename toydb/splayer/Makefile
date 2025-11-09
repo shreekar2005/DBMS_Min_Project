@@ -31,7 +31,7 @@ clean:
 
 ################################### TESTS #####################################
 
-TEST_SRC_SP = $(SRC_DIR)/testsp.c
+TEST_SRC_SP = $(SRC_DIR)/test_sp.c
 TEST_OBJ_SP = $(BUILD_DIR)/testsp.o
 TEST_BIN_SP = $(BUILD_DIR)/testsp
 

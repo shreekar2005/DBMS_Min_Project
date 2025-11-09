@@ -1,5 +1,5 @@
 /**
- * @file testpf.c
+ * @file test_pf.c
  * @brief Test program for the PF layer.
  */
 
@@ -7,8 +7,8 @@
 #include <stdlib.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h"
-#include "../include/buf.h"
-#include "../include/hash.h"
+#include "../include/pfbuf.h"
+#include "../include/pfhash.h"
 
 #define FILE1 "file1"
 #define FILE2 "file2"

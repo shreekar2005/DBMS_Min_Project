@@ -1,5 +1,5 @@
 /**
- * @file buf.c
+ * @file pfbuf.c
  * @brief Buffer management routines.
  *
  * Interface routines are: PFbufGet(), PFbufUnfix(), PFbufAlloc(),
@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h"
-#include "../include/buf.h"
-#include "../include/hash.h"
+#include "../include/pfbuf.h"
+#include "../include/pfhash.h"
 
 int PFmaxbpage=DEFAULT_MAX_PAGE;
 
@@ -179,7 +179,7 @@ static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage
 	return (PFE_OK);
 }
 
-/******************************* Interface to the Outside buf.c (these functions are used by pf.c) ****************/
+/******************************* Interface to the Outside pfbuf.c (these functions are used by pf.c) ****************/
 
 
 int PFbufGet(int fd, int pagenum, PFfpage **fpage, int (*readfcn)(int, int, PFfpage *), int (*writefcn)(int, int, PFfpage *))

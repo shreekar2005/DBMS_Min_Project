@@ -1,5 +1,5 @@
 /**
- * @file hash.c
+ * @file pfhash.c
  * @brief Functions to facilitate finding the buffer page given a file descriptor and a page number.
  */
 
@@ -7,14 +7,11 @@
 #include <stdlib.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h"
-#include "../include/hash.h"
+#include "../include/pfhash.h"
 
 /* hash table */
 static PFhash_entry *PFhashtbl[PF_HASH_TBL_SIZE];
 
-/**
- * @brief Initialize the hash table entries. Must be called before any of the other hash functions are used.
- */
 void PFhashInit(void)
 {
 	int i;
@@ -23,12 +20,7 @@ void PFhashInit(void)
 		PFhashtbl[i] = NULL;
 }
 
-/**
- * @brief Given the file descriptor "fd", and page number "page", find the buffer address of this particular page.
- * @param fd File descriptor.
- * @param page Page number.
- * @return Buffer address if found, NULL otherwise.
- */
+
 PFbpage *PFhashFind(int fd, int page)
 {
 	int bucket;			 /* bucket to look for the page*/
@@ -50,13 +42,7 @@ PFbpage *PFhashFind(int fd, int page)
 	return (NULL);
 }
 
-/**
- * @brief Insert the file descriptor "fd", page number "page", and the buffer address "bpage" into the hash table.
- * @param fd File descriptor.
- * @param page Page number.
- * @param bpage Buffer address for this page.
- * @return PFE_OK if OK, PFE_NOMEM if no memory, PFE_HASHPAGEEXIST if the page already exists.
- */
+
 int PFhashInsert(int fd, int page, PFbpage *bpage)
 {
 	int bucket;			 /* bucket to insert the page */
@@ -93,12 +79,7 @@ int PFhashInsert(int fd, int page, PFbpage *bpage)
 	return (PFE_OK);
 }
 
-/**
- * @brief Delete the entry whose file descriptor is "fd", and whose page number is "page" from the hash table.
- * @param fd File descriptor.
- * @param page Page number.
- * @return PFE_OK if OK, PFE_HASHNOTFOUND if can't find the entry.
- */
+
 int PFhashDelete(int fd, int page)
 {
 	int bucket;			 /* bucket for this page */
@@ -131,9 +112,7 @@ int PFhashDelete(int fd, int page)
 	return (PFE_OK);
 }
 
-/**
- * @brief Print the hash table entries.
- */
+
 void PFhashPrint(void)
 {
 	int i;

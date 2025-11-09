@@ -1,5 +1,5 @@
 /**
- * @file testhash.c
+ * @file test_pfhash.c
  * @brief Tests the hash table functions.
  */
 
@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include "../include/pf.h"
 #include "../include/pftypes.h"
-#include "../include/hash.h"
+#include "../include/pfhash.h"
 
 int main(void)
 {

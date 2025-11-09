@@ -8,9 +8,9 @@ The Paged file implementation is divided into 3 parts: The external interface,
 the buffer manager, and the hash table routines. The external interface,
 found in the file pf.c, keeps track of the opened file table, 
 and communicates with the buffer manager to read/write pages of the file. 
-The buffer manager, in the file buf.c, uses the hash table entries to 
+The buffer manager, in the file pfbuf.c, uses the hash table entries to 
 store and retrieve memory buffer addresses given file descriptors and page 
-numbers.  The hash table functions can be found in the file hash.c
+numbers.  The hash table functions can be found in the file pfhash.c
 
 II. The external Interface 
 

@@ -1,3 +1,6 @@
+#ifndef PFBUF_H
+#define PFBUF_H
+
 #include "../include/pftypes.h"
 
 #define STRATEGY_LRU 0 /**LRU for Buffer manager */
@@ -90,3 +93,5 @@ void PFbufSetNumPages(int num_bufs);
  * @param strategy The strategy (STRATEGY_LRU or STRATEGY_MRU).
  */
 void PFbufSetStrategy(int strategy);
+
+#endif /*PFBUF_H*/
