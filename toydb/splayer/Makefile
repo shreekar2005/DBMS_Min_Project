@@ -43,3 +43,6 @@ $(TEST_BIN_SP): $(TEST_OBJ_SP) $(TARGET) $(PFLAYER_LIB)
 
 $(TEST_OBJ_SP): $(TEST_SRC_SP)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+buildconvert: $(BUILD_DIR) $(TARGET) $(PFLAYER_LIB)
+	$(CC) $(CFLAGS) -o $(BUILD_DIR)/converter $(SRC_DIR)/converter.c $(TARGET) $(PFLAYER_LIB)
