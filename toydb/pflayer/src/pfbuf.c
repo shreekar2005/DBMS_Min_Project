@@ -17,12 +17,12 @@ int PFmaxbpage=DEFAULT_MAX_PAGE;
 
 static int PFnumbpage = 0;			  /**< # of buffer pages in memory */
 static int PFstrategy = STRATEGY_LRU; /**< current buffer strategy */
-static PFbpage *PFfirstbpage = NULL;  /**< ptr to first buffer page, or NULL */
-static PFbpage *PFlastbpage = NULL;	  /**< ptr to last buffer page, or NULL */
-static PFbpage *PFfreebpage = NULL;	  /**< list of free buffer pages */
+static PFbpage *PFfirstbpage = NULL;  /**< ptr to first buffer page (head), or NULL */
+static PFbpage *PFlastbpage = NULL;	  /**< ptr to last buffer page (tail), or NULL */
+static PFbpage *PFfreebpage = NULL;	  /**< list of free buffer pages (tail) */
 
 /**
- * @brief Insert the buffer page pointed by "bpage" into the free list.
+ * @brief Insert the buffer page pointed by "bpage" into the head of free list.
  * @param bpage The buffer page to insert.
  */
 static void PFbufInsertFree(PFbpage *bpage);
@@ -159,8 +159,7 @@ static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage
 		/* write out the dirty page */
 		if (tbpage->dirty)
 			num_physical_writes++;
-		if (tbpage->dirty && ((error = (*writefcn)(tbpage->fd,
-												   tbpage->page, &tbpage->fpage)) != PFE_OK))
+		if (tbpage->dirty && ((error = (*writefcn)(tbpage->fd, tbpage->page, &tbpage->fpage)) != PFE_OK))
 			return (error);
 		tbpage->dirty = FALSE;
 

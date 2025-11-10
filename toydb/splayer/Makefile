@@ -27,6 +27,7 @@ $(BUILD_DIR):
 
 clean:
 	rm -rf $(BUILD_DIR)
+	rm -f testout.tdb
 
 
 ################################### TESTS #####################################
@@ -35,6 +36,7 @@ TEST_SRC_SP = $(SRC_DIR)/test_sp.c
 TEST_OBJ_SP = $(BUILD_DIR)/testsp.o
 TEST_BIN_SP = $(BUILD_DIR)/testsp
 
+# testsp
 testsp: $(BUILD_DIR) $(TEST_BIN_SP)
 	$(TEST_BIN_SP)
 
@@ -44,5 +46,8 @@ $(TEST_BIN_SP): $(TEST_OBJ_SP) $(TARGET) $(PFLAYER_LIB)
 $(TEST_OBJ_SP): $(TEST_SRC_SP)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-buildconvert: $(BUILD_DIR) $(TARGET) $(PFLAYER_LIB)
+# testconverter
+buildconverter: $(BUILD_DIR) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $(BUILD_DIR)/converter $(SRC_DIR)/converter.c $(TARGET) $(PFLAYER_LIB)
+testconverter: buildconverter testin.txt
+	$(BUILD_DIR)/converter testin.txt testout.tdb 20 1

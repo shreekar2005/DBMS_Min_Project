@@ -25,7 +25,6 @@ typedef struct PFhdr_str
 
 #define PF_HDR_SIZE sizeof(PFhdr_str) /**< size of file header */
 
-/* actual page struct to be written onto the file */
 #define PF_PAGE_LIST_END -1 /**< end of list of free pages */
 #define PF_PAGE_USED -2		/**< page is being used */
 
