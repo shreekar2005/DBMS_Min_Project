@@ -36,10 +36,6 @@ typedef struct
 #define SPE_INVALID_SLOT -22   /**< Invalid slot ID */
 #define SPE_RECORD_TOO_BIG -23 /**< Record is too big to fit */
 
-/****************************************************************************
-                Slotted Page Level Interface
-****************************************************************************/
-
 /**
  * @brief Format a new, blank page as an empty slotted page.
  * @param pagePtr Pointer to the page buffer.

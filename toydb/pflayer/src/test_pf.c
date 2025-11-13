@@ -13,7 +13,6 @@
 #define FILE1 "file1"
 #define FILE2 "file2"
 
-/* Function prototypes */
 void writefile(const char *fname);
 void readfile(const char *fname);
 void printfile(int fd);

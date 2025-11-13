@@ -21,53 +21,21 @@ static PFbpage *PFfirstbpage = NULL;  /**< ptr to first buffer page (head), or N
 static PFbpage *PFlastbpage = NULL;	  /**< ptr to last buffer page (tail), or NULL */
 static PFbpage *PFfreebpage = NULL;	  /**< list of free buffer pages (tail) */
 
+
 /**
  * @brief Insert the buffer page pointed by "bpage" into the head of free list.
  * @param bpage The buffer page to insert.
  */
-static void PFbufInsertFree(PFbpage *bpage);
-
-/**
- * @brief Link the buffer page pointed by "bpage" as the head of the used buffer list.
- * @param bpage Pointer to buffer page to be linked.
- */
-static void PFbufLinkHead(PFbpage *bpage);
-
-/**
- * @brief Unlink the page pointed by bpage from the buffer list.
- *
- * Assume that bpage is a valid pointer. Set the "prevpage" and "nextpage"
- * fields to NULL. The caller is responsible to either place
- * the unlinked page into the free list, or insert it back
- * into the used list.
- * @param bpage Buffer page to be unlinked from the used list.
- */
-static void PFbufUnlink(PFbpage *bpage);
-
-/**
- * @brief Allocate a buffer page.
- *
- * Allocate a buffer page and set *bpage to point to it. *bpage
- * is set to NULL if one can not be allocated.
- * The "nextpage" and "prevpage" fields of *bpage are linked as
- * the head of the list of used buffers. All the other fields are undefined.
- *
- * @param bpage Pointer to pointer to buffer bpage to be allocated.
- * @param writefcn Function to write pages.
- * @return PFE_OK if no error, PFE_NOMEM if no memory, PFE_NOBUF if no buffer space.
- */
-static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage *));
-
-
-/*************************************** Static Functions *********************************************/
-
 static void PFbufInsertFree(PFbpage *bpage)
 {
 	bpage->nextpage = PFfreebpage;
 	PFfreebpage = bpage;
 }
 
-
+/**
+ * @brief Link the buffer page pointed by "bpage" as the head of the used buffer list.
+ * @param bpage Pointer to buffer page to be linked.
+ */
 static void PFbufLinkHead(PFbpage *bpage)
 {
 	bpage->nextpage = PFfirstbpage;
@@ -79,7 +47,15 @@ static void PFbufLinkHead(PFbpage *bpage)
 		PFlastbpage = bpage;
 }
 
-
+/**
+ * @brief Unlink the page pointed by bpage from the buffer list.
+ *
+ * Assume that bpage is a valid pointer. Set the "prevpage" and "nextpage"
+ * fields to NULL. The caller is responsible to either place
+ * the unlinked page into the free list, or insert it back
+ * into the used list.
+ * @param bpage Buffer page to be unlinked from the used list.
+ */
 static void PFbufUnlink(PFbpage *bpage)
 {
 	if (PFfirstbpage == bpage)
@@ -97,7 +73,18 @@ static void PFbufUnlink(PFbpage *bpage)
 	bpage->prevpage = bpage->nextpage = NULL;
 }
 
-
+/**
+ * @brief Allocate a buffer page.
+ *
+ * Allocate a buffer page and set *bpage to point to it. *bpage
+ * is set to NULL if one can not be allocated.
+ * The "nextpage" and "prevpage" fields of *bpage are linked as
+ * the head of the list of used buffers. All the other fields are undefined.
+ *
+ * @param bpage Pointer to pointer to buffer bpage to be allocated.
+ * @param writefcn Function to write pages.
+ * @return PFE_OK if no error, PFE_NOMEM if no memory, PFE_NOBUF if no buffer space.
+ */
 static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage *))
 {
 	PFbpage *tbpage; /* temporary pointer to buffer page */
@@ -139,9 +126,9 @@ static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage
 					break; // found victim
 			}
 		}
-		else // Assume MRU
+		else // else PFstrategy is MRU
 		{
-			// MRU: Scan from head (Most Recently Used)
+			// MRU: Scan from head
 			for (tbpage = PFfirstbpage; tbpage != NULL; tbpage = tbpage->nextpage)
 			{
 				if (!tbpage->fixed)
@@ -177,8 +164,6 @@ static int PFbufInternalAlloc(PFbpage **bpage, int (*writefcn)(int, int, PFfpage
 	PFbufLinkHead(*bpage);
 	return (PFE_OK);
 }
-
-/******************************* Interface to the Outside pfbuf.c (these functions are used by pf.c) ****************/
 
 
 int PFbufGet(int fd, int pagenum, PFfpage **fpage, int (*readfcn)(int, int, PFfpage *), int (*writefcn)(int, int, PFfpage *))

@@ -40,15 +40,7 @@ static PFftab_ele PFftab[PF_FTAB_SIZE]; /**< table of opened files */
  * @param fd The file descriptor.
  * @param pagenum The page number to check.
  */
-#define PFinvalidPagenum(fd, pagenum) ((pagenum) < 0 || (pagenum) >= \
-															PFftab[fd].hdr.numpages)
-
-/****************** Internal Support Functions *****************************/
-static char *savestr(const char *str);
-static int PFtabFindFname(const char *fname);
-static int PFftabFindFree(void);
-static int PFreadfcn(int fd, int pagenum, PFfpage *buf);
-static int PFwritefcn(int fd, int pagenum, PFfpage *buf);
+#define PFinvalidPagenum(fd, pagenum) ((pagenum) < 0 || (pagenum) >= PFftab[fd].hdr.numpages)
 
 /**
  * @brief Allocate memory and save a string.

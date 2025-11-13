@@ -27,6 +27,33 @@
 #define STRATEGY_LRU 0
 #define STRATEGY_MRU 1
 
+void createFile(void);
+void runTest(void);
+
+int main(void)
+{
+    int error;
+    createFile();
+
+    printf("RUNNING TEST WITH LRU\n");
+    PF_Init(BUFFER_SIZE, STRATEGY_LRU);
+    runTest();
+    PF_PrintStats(); // Print stats for LRU
+
+    printf("RUNNING TEST WITH MRU\n");
+    PF_Init(BUFFER_SIZE, STRATEGY_MRU); // Re-init with new strategy
+    runTest();
+    PF_PrintStats(); // Print stats for MRU
+
+    if ((error = PF_DestroyFile(TEST_FILE)) != PFE_OK)
+    {
+        PF_PrintError("PF_DestroyFile");
+        exit(1);
+    }
+
+    return 0;
+}
+
 /**
  * @brief Fills a new file with dummy data.
  */
@@ -141,28 +168,4 @@ void runTest(void)
         PF_PrintError("PF_CloseFile");
         exit(1);
     }
-}
-
-int main(void)
-{
-    int error;
-    createFile();
-
-    printf("RUNNING TEST WITH LRU\n");
-    PF_Init(BUFFER_SIZE, STRATEGY_LRU);
-    runTest();
-    PF_PrintStats(); // Print stats for LRU
-
-    printf("RUNNING TEST WITH MRU\n");
-    PF_Init(BUFFER_SIZE, STRATEGY_MRU); // Re-init with new strategy
-    runTest();
-    PF_PrintStats(); // Print stats for MRU
-
-    if ((error = PF_DestroyFile(TEST_FILE)) != PFE_OK)
-    {
-        PF_PrintError("PF_DestroyFile");
-        exit(1);
-    }
-
-    return 0;
 }
