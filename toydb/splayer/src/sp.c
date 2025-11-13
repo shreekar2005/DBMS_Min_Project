@@ -168,10 +168,13 @@ int SP_ScanDb(int tdb_fd)
 }
 
 
-int SP_FindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *outSlotID)
+int SP_FindRecord(int tdb_fd, const char *recordToFind, int *outPageNumPtr, int *outSlotID, char** outPagePtrPtr)
 {
     // Call the internal helper function
-    return SPfindRecord(tdb_fd, recordToFind, outPageNum, outSlotID);
+    int status;
+    status = SPfindRecord(tdb_fd, recordToFind, outPageNumPtr, outSlotID, outPagePtrPtr); 
+    if(status==SPE_OK) PF_UnfixPage(tdb_fd, *outPageNumPtr, FALSE); 
+    return status;
 }
 
 

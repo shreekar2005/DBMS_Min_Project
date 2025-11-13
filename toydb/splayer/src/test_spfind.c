@@ -51,7 +51,8 @@ int main(int argc, char *argv[]) {
         printf("\nRecord: \"%s\"\n", recordToFind);
 
         int pageNum, slotID;
-        int err = SP_FindRecord(tdb_fd, recordToFind, &pageNum, &slotID);
+        char* pagePtr;
+        int err = SP_FindRecord(tdb_fd, recordToFind, &pageNum, &slotID, &pagePtr);
 
         if (err == SPE_OK) {
             printf("*** Record Found! ***\n");

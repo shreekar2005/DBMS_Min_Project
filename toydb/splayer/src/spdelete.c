@@ -13,9 +13,10 @@ int SPdeleteRecordByContent(int tdb_fd, const char *recordToFind)
 {
     int pageNum, slotID;
     int err;
+    char* pagePtr=NULL; 
 
     // 1. Find the record using the helper
-    err = SPfindRecord(tdb_fd, recordToFind, &pageNum, &slotID);
+    err = SPfindRecord(tdb_fd, recordToFind, &pageNum, &slotID, &pagePtr); 
 
     if (err == SPE_RECORD_NOT_FOUND) {
         return SPE_RECORD_NOT_FOUND;
@@ -24,15 +25,16 @@ int SPdeleteRecordByContent(int tdb_fd, const char *recordToFind)
         return err; 
     }
 
-    // 2. Get that specific page
-    char *pagePtr;
-    err = PF_GetThisPage(tdb_fd, pageNum, &pagePtr);
-    if (err != PFE_OK) {
-        PF_PrintError("SPdeleteRecordByContent: PF_GetThisPage");
-        return err;
-    }
+    // 2. Get that specific page --> commented by tavi on nov 13
+    // char *pagePtr;
+    // err = PF_GetThisPage(tdb_fd, pageNum, &pagePtr);
+    // if (err != PFE_OK) {
+    //     PF_PrintError("SPdeleteRecordByContent: PF_GetThisPage");
+    //     return err;
+    // }
 
     // 3. Delete the record from the page
+    // err = SP_DeleteRecord(pagePtr, slotID);
     err = SP_DeleteRecord(pagePtr, slotID);
     if (err != SPE_OK) {
         PF_UnfixPage(tdb_fd, pageNum, FALSE); // Unfix clean

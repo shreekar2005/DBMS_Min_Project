@@ -9,7 +9,7 @@
 #include "../include/sp.h"
 #include "../include/spfind.h"
 
-int SPfindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *outSlotID)
+int SPfindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *outSlotID, char** outPagePtrPtr)
 {
     int lenToFind = strlen(recordToFind);
     int currentPageNum = -1;
@@ -25,8 +25,9 @@ int SPfindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *out
             if (recLen == lenToFind && strncmp(record, recordToFind, recLen) == 0) {
                 *outPageNum = currentPageNum;
                 *outSlotID = currentSlot;
+                *outPagePtrPtr = pagePtr; 
                 
-                PF_UnfixPage(tdb_fd, currentPageNum, FALSE);
+                // PF_UnfixPage(tdb_fd, currentPageNum, FALSE);
                 return SPE_OK;
             }
         }
