@@ -86,6 +86,8 @@ sp_testconvert:
 	$(MAKE) -C splayer testconvert
 sp_testfind:
 	$(MAKE) -C splayer testfind
+sp_testinsert:
+	$(MAKE) -C splayer testinsert
 sp_testdelete:
 	$(MAKE) -C splayer testdelete
 sp_testscan:

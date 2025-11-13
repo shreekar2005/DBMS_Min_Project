@@ -1,15 +1,16 @@
 # Some make command info :
 #
 # make (or make splayer) : Builds the 'splayer' relocatable object (build/splayer.o).
-# make clean             : Removes the entire 'build/' directory and 'testout.tdb'.
+# make clean             : Removes the entire 'build/' directory and 'testout.tbd'.
 # make clear             : Runs 'make clean' and then clears the terminal.
 #
 # Tests
 #
 # make testsp            : Builds and runs the 'testsp' executable (build/testsp).
-# make testconvert       : Builds and runs 'testconvert' to create 'testout.tdb' from 'testin.txt'.
+# make testconvert       : Builds 'testout.tdb' from 'testin.txt'.
 # make testscan          : Builds and runs 'testscan' on 'testout.tdb'.
 # make testfind          : Builds and runs 'testfind' to search for a record in 'testout.tdb'.
+# make testinsert        : Builds and runs 'testinsert' to add a record to 'testout.tdb'.
 # make testdelete        : Builds and runs 'testdelete' to delete a record from 'testout.tdb'.
 # make testanalyze       : Builds and runs the 'testanalyze' executable on 'testout.tdb'.
 
@@ -20,12 +21,14 @@ INCLUDE_DIR = include
 
 SRC_DIR = src
 BUILD_DIR = build
-LIB_SRC = $(SRC_DIR)/sp.c $(SRC_DIR)/spconvert.c $(SRC_DIR)/spscan.c $(SRC_DIR)/spfind.c $(SRC_DIR)/spdelete.c $(SRC_DIR)/spanalyze.c
-LIB_OBJ = $(BUILD_DIR)/sp.o $(BUILD_DIR)/spconvert.o $(BUILD_DIR)/spscan.o $(BUILD_DIR)/spfind.o $(BUILD_DIR)/spdelete.o $(BUILD_DIR)/spanalyze.o
+# Add spinsert.c to LIB_SRC
+LIB_SRC = $(SRC_DIR)/sp.c $(SRC_DIR)/spconvert.c $(SRC_DIR)/spscan.c $(SRC_DIR)/spfind.c $(SRC_DIR)/spdelete.c $(SRC_DIR)/spanalyze.c $(SRC_DIR)/spinsert.c
+# Add spinsert.o to LIB_OBJ
+LIB_OBJ = $(BUILD_DIR)/sp.o $(BUILD_DIR)/spconvert.o $(BUILD_DIR)/spscan.o $(BUILD_DIR)/spfind.o $(BUILD_DIR)/spdelete.o $(BUILD_DIR)/spanalyze.o $(BUILD_DIR)/spinsert.o
 TARGET = $(BUILD_DIR)/splayer.o
 PFLAYER_LIB = ../pflayer/build/pflayer.o
 
-.PHONY: splayer clear clean testsp testconvert testscan testfind testdelete testanalyze
+.PHONY: splayer clear clean testsp testconvert testscan testfind testdelete testinsert testanalyze
 
 #default make
 splayer: $(BUILD_DIR) $(TARGET)
@@ -57,15 +60,22 @@ $(BUILD_DIR)/spdelete.o: $(SRC_DIR)/spdelete.c
 $(BUILD_DIR)/spanalyze.o: $(SRC_DIR)/spanalyze.c
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
+# New rule for spinsert.o
+$(BUILD_DIR)/spinsert.o: $(SRC_DIR)/spinsert.c
+	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+
 clear: clean
 	clear
 clean:
+	@echo "--- Cleaning build directory and testout.tdb ---"
 	rm -rf $(BUILD_DIR)
 	rm -f testout.tdb
 
-#Needed by some tests (e.g. delete, scan, find)
-testout.tdb: 
-	$(MAKE) testconvert
+# This is the new, correct rule for building testout.tdb
+# It depends on the executable that builds it, and the source data
+testout.tdb: $(BUILD_DIR)/testconvert testin.txt
+	@echo "--- (Re)Building 'testout.tdb' ---"
+	$(BUILD_DIR)/testconvert 20 0
 
 ################################### TESTS #####################################
 
@@ -88,8 +98,9 @@ TEST_SRC_CONVERT = $(SRC_DIR)/test_spconvert.c
 TEST_OBJ_CONVERT = $(BUILD_DIR)/testconvert.o
 TEST_BIN_CONVERT = $(BUILD_DIR)/testconvert
 
-testconvert: $(BUILD_DIR) $(TEST_BIN_CONVERT) testin.txt
-	$(TEST_BIN_CONVERT) 20 0
+# This target is now just a .PHONY alias that depends on the file testout.tdb
+testconvert: testout.tdb
+	@echo "--- 'testout.tdb' is up to date. ---"
 
 $(TEST_BIN_CONVERT): $(TEST_OBJ_CONVERT) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -123,6 +134,20 @@ $(TEST_BIN_FIND): $(TEST_OBJ_FIND) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
 
 $(BUILD_DIR)/testfind.o: $(TEST_SRC_FIND)
+	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+
+# test_spinsert (NEW)
+TEST_SRC_INSERT = $(SRC_DIR)/test_spinsert.c
+TEST_OBJ_INSERT = $(BUILD_DIR)/testinsert.o
+TEST_BIN_INSERT = $(BUILD_DIR)/testinsert
+
+testinsert: $(BUILD_DIR) $(TEST_BIN_INSERT) testout.tdb
+	$(TEST_BIN_INSERT) 20 0
+
+$(TEST_BIN_INSERT): $(TEST_OBJ_INSERT) $(TARGET) $(PFLAYER_LIB)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(BUILD_DIR)/testinsert.o: $(TEST_SRC_INSERT)
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 # test_spdelete

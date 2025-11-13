@@ -18,6 +18,7 @@
 #include "../include/spfind.h"
 #include "../include/spdelete.h"
 #include "../include/spanalyze.h"
+#include "../include/spinsert.h"
 
 
 /* Static function prototypes */
@@ -64,7 +65,7 @@ int SP_GetFreeSpace(char *pagePtr)
 }
 
 
-int SP_InsertRecord(char *pagePtr, char *record, int recLen)
+int SP_InsertRecord(char *pagePtr, const char *record, int recLen)
 {
     PageHeader *header = getHeader(pagePtr);
     Slot *slots = getSlots(pagePtr);
@@ -182,6 +183,12 @@ int SP_DeleteRecordByContent(int tdb_fd, const char *recordToFind)
 {
     // Call the internal helper function
     return SPdeleteRecordByContent(tdb_fd, recordToFind);
+}
+
+int SP_InsertRecordByContent(int tdb_fd, const char *record, int recLen)
+{
+    // Call the internal helper function from spinsert.c
+    return SPinsertRecordByContent(tdb_fd, record, recLen);
 }
 
 int SP_AnalyzeDb(int tdb_fd)
