@@ -11,10 +11,7 @@
 # make testscan          : Builds and runs 'testscan' on 'testout.tdb'.
 # make testfind          : Builds and runs 'testfind' to search for a record in 'testout.tdb'.
 # make testdelete        : Builds and runs 'testdelete' to delete a record from 'testout.tdb'.
-#
-# Utility
-#
-# make util              : Builds and runs the 'util_db' executable on 'testout.tdb'.
+# make testanalyze       : Builds and runs the 'testanalyze' executable on 'testout.tdb'.
 
 
 CC = cc
@@ -23,12 +20,12 @@ INCLUDE_DIR = include
 
 SRC_DIR = src
 BUILD_DIR = build
-LIB_SRC = $(SRC_DIR)/sp.c $(SRC_DIR)/spconvert.c $(SRC_DIR)/spscan.c $(SRC_DIR)/spfind.c $(SRC_DIR)/spdelete.c
-LIB_OBJ = $(BUILD_DIR)/sp.o $(BUILD_DIR)/spconvert.o $(BUILD_DIR)/spscan.o $(BUILD_DIR)/spfind.o $(BUILD_DIR)/spdelete.o
+LIB_SRC = $(SRC_DIR)/sp.c $(SRC_DIR)/spconvert.c $(SRC_DIR)/spscan.c $(SRC_DIR)/spfind.c $(SRC_DIR)/spdelete.c $(SRC_DIR)/spanalyze.c
+LIB_OBJ = $(BUILD_DIR)/sp.o $(BUILD_DIR)/spconvert.o $(BUILD_DIR)/spscan.o $(BUILD_DIR)/spfind.o $(BUILD_DIR)/spdelete.o $(BUILD_DIR)/spanalyze.o
 TARGET = $(BUILD_DIR)/splayer.o
 PFLAYER_LIB = ../pflayer/build/pflayer.o
 
-.PHONY: splayer clear clean testsp testconvert testscan testfind testdelete util
+.PHONY: splayer clear clean testsp testconvert testscan testfind testdelete testanalyze
 
 #default make
 splayer: $(BUILD_DIR) $(TARGET)
@@ -55,6 +52,9 @@ $(BUILD_DIR)/spfind.o: $(SRC_DIR)/spfind.c
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 $(BUILD_DIR)/spdelete.o: $(SRC_DIR)/spdelete.c
+	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+
+$(BUILD_DIR)/spanalyze.o: $(SRC_DIR)/spanalyze.c
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 clear: clean
@@ -135,16 +135,16 @@ $(TEST_BIN_DELETE): $(TEST_OBJ_DELETE) $(TARGET) $(PFLAYER_LIB)
 $(BUILD_DIR)/testdelete.o: $(TEST_SRC_DELETE)
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
-# util_db
-TEST_SRC_UTIL = $(SRC_DIR)/util_db.c
-TEST_OBJ_UTIL = $(BUILD_DIR)/util_db.o
-TEST_BIN_UTIL = $(BUILD_DIR)/util_db
+# test_spanalyze
+TEST_SRC_ANALYZE = $(SRC_DIR)/test_spanalyze.c
+TEST_OBJ_ANALYZE = $(BUILD_DIR)/test_spanalyze.o
+TEST_BIN_ANALYZE = $(BUILD_DIR)/testanalyze
 
-util: $(BUILD_DIR) $(TEST_BIN_UTIL)
-	$(TEST_BIN_UTIL) testout.tdb 20 0
+testanalyze: $(BUILD_DIR) $(TEST_BIN_ANALYZE)
+	$(TEST_BIN_ANALYZE) testout.tdb 20 0
 
-$(TEST_BIN_UTIL): $(TEST_OBJ_UTIL) $(TARGET) $(PFLAYER_LIB)
+$(TEST_BIN_ANALYZE): $(TEST_OBJ_ANALYZE) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
 
-$(BUILD_DIR)/util_db.o: $(TEST_SRC_UTIL)
+$(BUILD_DIR)/test_spanalyze.o: $(TEST_SRC_ANALYZE)
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@

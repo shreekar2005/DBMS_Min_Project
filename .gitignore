@@ -56,3 +56,6 @@ dkms.conf
 
 # build directories
 build/
+
+# Custom toydb database files
+*.tdb

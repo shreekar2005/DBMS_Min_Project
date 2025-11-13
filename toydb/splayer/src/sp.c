@@ -17,6 +17,7 @@
 #include "../include/spscan.h"
 #include "../include/spfind.h"
 #include "../include/spdelete.h"
+#include "../include/spanalyze.h"
 
 
 /* Static function prototypes */
@@ -151,7 +152,7 @@ int SP_GetNextRecord(char *pagePtr, int *slotID, char **record, int *recLen)
 }
 
 
-/* --- High-Level Database Wrapper Functions (New) --- */
+/* --- High-Level Database Wrapper Functions --- */
 
 int SP_ConvertTxtToTdb(const char *inputTxtFile, const char *outputTdbFile)
 {
@@ -178,4 +179,10 @@ int SP_DeleteRecordByContent(int tdb_fd, const char *recordToFind)
 {
     // Call the internal helper function
     return SPdeleteRecordByContent(tdb_fd, recordToFind);
+}
+
+int SP_AnalyzeDb(int tdb_fd)
+{
+    // Call the internal helper function
+    return SPanalyzeDb(tdb_fd);
 }

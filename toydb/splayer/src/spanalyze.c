@@ -1,27 +1,20 @@
 /**
- * @file util_db.c
- * @brief Analyzes a .tdb file and reports on space utilization,
- * comparing slotted pages vs. static record management.
- *
- * This tool directly addresses the performance metrics part of Objective 2.
+ * @file spanalyze.c
+ * @brief Implementation of the database analysis helper.
  */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-// Include paths are relative to this file's location (splayer/src/)
 #include "../../pflayer/include/pf.h"
 #include "../include/sp.h"
-
-void print_usage(const char *progName) {
-    fprintf(stderr, "Usage: %s <tdb_file> <num_buffers> <strategy>\n", progName);
-    fprintf(stderr, "  <strategy>: 0 for LRU, 1 for MRU\n");
-}
+#include "../include/spanalyze.h"
 
 /**
  * @brief Helper to print one row of the results table
  */
-void print_table_row(const char* method, long dataBytes, long totalBytes, int pages) {
+static void print_table_row(const char* method, long dataBytes, long totalBytes, int pages) {
     double utilization = 0.0;
     if (totalBytes > 0) {
         utilization = ((double)dataBytes / (double)totalBytes) * 100.0;
@@ -29,28 +22,11 @@ void print_table_row(const char* method, long dataBytes, long totalBytes, int pa
     printf("| %-20s | %12ld | %10d | %15.2f%% |\n", method, totalBytes, pages, utilization);
 }
 
-int main(int argc, char *argv[]) {
-    // --- 1. Argument Parsing ---
-    if (argc != 4) {
-        print_usage(argv[0]);
-        return 1;
-    }
 
-    const char *tdbFile = argv[1];
-    int numBuffers = atoi(argv[2]);
-    int strategy = atoi(argv[3]);
-
-    printf("--- Analyzing space utilization for '%s' ---\n", tdbFile);
-
-    // --- 2. Initialization ---
-    PF_Init(numBuffers, strategy);
-
-    int tdb_fd = PF_OpenFile(tdbFile);
-    if (tdb_fd < 0) {
-        PF_PrintError("Error: PF_OpenFile");
-        return 1;
-    }
-
+/**
+ * @brief Internal helper to scan and analyze a .tdb file.
+ */
+int SPanalyzeDb(int tdb_fd) {
     // --- 3. Scan and Collect Statistics ---
     int currentPageNum = -1;
     char *pagePtr;
@@ -81,11 +57,8 @@ int main(int argc, char *argv[]) {
 
     if (err != PFE_EOF) {
         PF_PrintError("Error during scan");
-        PF_CloseFile(tdb_fd);
-        return 1;
+        return err; // Return the PF error
     }
-
-    PF_CloseFile(tdb_fd);
 
     // --- 4. Calculate and Print Report ---
     printf("\n--- Slotted Page Statistics ---\n");
@@ -123,5 +96,5 @@ int main(int argc, char *argv[]) {
     }
     printf("|----------------------|--------------|-------------|---------------|\n");
 
-    return 0;
+    return SPE_OK;
 }

@@ -129,5 +129,11 @@ int SP_FindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *ou
  */
 int SP_DeleteRecordByContent(int tdb_fd, const char *recordToFind);
 
+/**
+ * @brief Analyzes space utilization of a .tdb file and prints a report.
+ * @param tdb_fd File descriptor for the open .tdb file.
+ * @return SPE_OK on success, or a PF error code.
+ */
+int SP_AnalyzeDb(int tdb_fd);
 
 #endif // SP_H
