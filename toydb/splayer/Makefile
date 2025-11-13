@@ -63,6 +63,10 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -f testout.tdb
 
+#Needed by some tests (e.g. delete, scan, find)
+testout.tdb: 
+	$(MAKE) testconvert
+
 ################################### TESTS #####################################
 
 # test_sp
@@ -84,7 +88,7 @@ TEST_SRC_CONVERT = $(SRC_DIR)/test_spconvert.c
 TEST_OBJ_CONVERT = $(BUILD_DIR)/testconvert.o
 TEST_BIN_CONVERT = $(BUILD_DIR)/testconvert
 
-testconvert: $(BUILD_DIR) $(TEST_BIN_CONVERT)
+testconvert: $(BUILD_DIR) $(TEST_BIN_CONVERT) testin.txt
 	$(TEST_BIN_CONVERT) testin.txt testout.tdb 20 0
 
 $(TEST_BIN_CONVERT): $(TEST_OBJ_CONVERT) $(TARGET) $(PFLAYER_LIB)
@@ -98,7 +102,7 @@ TEST_SRC_SCAN = $(SRC_DIR)/test_spscan.c
 TEST_OBJ_SCAN = $(BUILD_DIR)/testscan.o
 TEST_BIN_SCAN = $(BUILD_DIR)/testscan
 
-testscan: $(BUILD_DIR) $(TEST_BIN_SCAN)
+testscan: $(BUILD_DIR) $(TEST_BIN_SCAN) testout.tdb
 	$(TEST_BIN_SCAN) testout.tdb 20 0
 
 $(TEST_BIN_SCAN): $(TEST_OBJ_SCAN) $(TARGET) $(PFLAYER_LIB)
@@ -112,8 +116,8 @@ TEST_SRC_FIND = $(SRC_DIR)/test_spfind.c
 TEST_OBJ_FIND = $(BUILD_DIR)/testfind.o
 TEST_BIN_FIND = $(BUILD_DIR)/testfind
 
-testfind: $(BUILD_DIR) $(TEST_BIN_FIND)
-	$(TEST_BIN_FIND) testout.tdb "3;CH 831;BB;C;P;941175;1.00;;" 20 0
+testfind: $(BUILD_DIR) $(TEST_BIN_FIND) testout.tdb
+	$(TEST_BIN_FIND) testout.tdb "00305022;bpradeep@cse.iitb.ac.in;;" 20 0
 
 $(TEST_BIN_FIND): $(TEST_OBJ_FIND) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -126,8 +130,8 @@ TEST_SRC_DELETE = $(SRC_DIR)/test_spdelete.c
 TEST_OBJ_DELETE = $(BUILD_DIR)/testdelete.o
 TEST_BIN_DELETE = $(BUILD_DIR)/testdelete
 
-testdelete: $(BUILD_DIR) $(TEST_BIN_DELETE)
-	$(TEST_BIN_DELETE) testout.tdb "3;CH 831;BB;C;P;941175;1.00;;" 20 0
+testdelete: $(BUILD_DIR) $(TEST_BIN_DELETE) testout.tdb
+	$(TEST_BIN_DELETE) testout.tdb "00305022;bpradeep@cse.iitb.ac.in;;" 20 0
 
 $(TEST_BIN_DELETE): $(TEST_OBJ_DELETE) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -140,7 +144,7 @@ TEST_SRC_ANALYZE = $(SRC_DIR)/test_spanalyze.c
 TEST_OBJ_ANALYZE = $(BUILD_DIR)/test_spanalyze.o
 TEST_BIN_ANALYZE = $(BUILD_DIR)/testanalyze
 
-testanalyze: $(BUILD_DIR) $(TEST_BIN_ANALYZE)
+testanalyze: $(BUILD_DIR) $(TEST_BIN_ANALYZE) testout.tdb
 	$(TEST_BIN_ANALYZE) testout.tdb 20 0
 
 $(TEST_BIN_ANALYZE): $(TEST_OBJ_ANALYZE) $(TARGET) $(PFLAYER_LIB)

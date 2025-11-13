@@ -22,6 +22,7 @@
 # make sp_testfind     : Runs 'testfind' from the 'splayer' directory.
 # make sp_testdelete   : Runs 'testdelete' from the 'splayer' directory.
 # make sp_testscan     : Runs 'testscan' from the 'splayer' directory.
+# make sp_testanalyze     : Runs 'testanalyze' from the 'splayer' directory.
 
 CC = cc
 CFLAGS = -g
@@ -70,14 +71,7 @@ clean:
 
 ################################### TESTS #####################################
 
-testall: am_test1 am_test2 am_test3 pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan
-
-am_test1:
-	$(MAKE) -C amlayer test1
-am_test2:
-	$(MAKE) -C amlayer test2
-am_test3:
-	$(MAKE) -C amlayer test3
+testall: pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan sp_testanalyze am_test1 am_test2 am_test3 
 
 pf_testpf:
 	$(MAKE) -C pflayer testpf
@@ -96,3 +90,12 @@ sp_testdelete:
 	$(MAKE) -C splayer testdelete
 sp_testscan:
 	$(MAKE) -C splayer testscan
+sp_testanalyze:
+	$(MAKE) -C splayer testanalyze
+
+am_test1:
+	$(MAKE) -C amlayer test1
+am_test2:
+	$(MAKE) -C amlayer test2
+am_test3:
+	$(MAKE) -C amlayer test3

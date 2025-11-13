@@ -1,71 +1,125 @@
-# DBMS\_Min\_Project
+# DBMS Min Project
 
-This repository contains a mini-project to build a toy database (ToyDB) from scratch in C. The project is divided into distinct layers, each with its own source code, headers, and Makefile.
+This is a minor project for a 3rd-year Computer Science Database Management Systems (DBMS) course. The goal is to implement and understand the key layers of a database storage engine.
+
+The details of the project problem are in `Assignment.pdf`.
+
+## For new people or people who want to work on this project:
+
+1.  `toydb` is the name of our **Database**.
+2.  `pflayer` is the **Page File Layer**. This is the lowest level, responsible for reading/writing pages from/to disk and managing the buffer pool.
+3.  `splayer` is the **Slotted Page Layer**. This layer sits on `pflayer` and implements a slotted page structure to manage variable-sized records within a page.
+4.  `amlayer` is the **Access Method Layer**. This layer also sits on `pflayer` and implements a B+ Tree index for efficient data retrieval.
 
 ## Project Structure
 
-The `toydb/` directory contains the core database source code, organized into three layers:
+  * `Makefile`: Top-level makefile that proxies to `toydb/Makefile`.
+  * `README.md`: This file.
+  * `Assignment.pdf`: The project assignment details.
+  * `data/`: Contains sample `.txt` data files used to populate the database.
+  * `Reports/`: Contains project reports (e.g., `Report_Objective1.pdf`).
+  * `toydb/`: The complete ToyDB source code.
 
-  * **`toydb/pflayer` (Page File Layer):** The lowest layer, responsible for file I/O, managing pages on disk, and maintaining a buffer pool. It compiles into a single object file: `pflayer/build/pflayer.o`.
-  * **`toydb/amlayer` (Access Method Layer):** The middle layer, built on top of the PF Layer. It implements the access methods for data (e.g., B+ Tree indexing) and handles record searching, insertion, and scanning. It compiles into `amlayer/build/amlayer.o`.
-  * **`toydb/splayer` (Slotted Page Layer):** The layer on top of PF layer, which manages slotted pages.
+## toydb Directory Structure
 
-The root directory also contains:
+The `toydb/` directory contains the complete source code for the ToyDB storage engine. The structure is refactored into modular layers.
 
-  * `data/`: Sample `.txt` files used to populate the database.
-  * `Reports/`: Project reports for the assignment objectives.
+  * `amlayer/`: Contains the Access Method (B+ Tree) Layer.
+      * `include/`: Headers for the AM layer (e.g., `am.h`).
+      * `src/`: Source files for the AM layer (e.g., `am.c`, `aminsert.c`) and its tests.
+      * `Makefile`: Makefile to build the AM layer and its tests.
+  * `pflayer/`: Contains the Page File (Buffer Manager) Layer.
+      * `include/`: Headers for the PF layer (e.g., `pf.h`, `pfbuf.h`).
+      * `src/`: Source files for the PF layer (e.g., `pf.c`, `pfbuf.c`) and its tests.
+      * `Makefile`: Makefile to build the PF layer and its tests.
+  * `splayer/`: Contains the Slotted Page Layer.
+      * `include/`: Headers for the SP layer (e.g., `sp.h`, `spscan.h`).
+      * `src/`: Source files for the SP layer (e.g., `sp.c`, `spscan.c`) and its tests.
+      * `Makefile`: Makefile to build the SP layer and its tests.
+  * `main.c`: The main C entry point for the `toydb.out` executable (future query processor).
+  * `Makefile`: The main makefile for building the entire `toydb.out` executable by combining all layers.
+  * `am.pdf`: Documentation for the Access Method layer.
+  * `pf.pdf`: Documentation for the Page File layer.
 
 -----
 
-## How to Build and Run
+## Build and Run Commands for toydb
 
-All commands should be run from the `toydb/` directory. The build system is designed around testing each layer individually.
+### Dependency installation for Ubuntu
 
-### Running Tests (Recommended)
+1.  **Update Package Lists:**
 
-This is the primary way to build and run the code. The test targets will automatically build all necessary dependencies (e.g., running an `amlayer` test will first build the `pflayer`).
-
-  * **Run all tests from all layers:**
     ```bash
-    make testall
-    ```
-  * **Run specific `amlayer` tests (builds AM+PF layers):**
-    ```bash
-    make am_test1
-    make am_test2
-    make am_test3
-    ```
-  * **Run specific `pflayer` tests (builds PF layer only):**
-    ```bash
-    make pf_testpf
-    make pf_testbuf
-    make pf_testhash
-    ```
-  * **Run the `splayer` tests (builds SP+PF layer only):**
-    ```bash
-    make sp_testsp
+    sudo apt update
     ```
 
-### Cleaning
+2.  **Install Dependencies:**
+    This command installs the build tools (`make`) and the C compiler (`cc`/`gcc`).
 
-  * **Clean all builds:** Deletes all object files and test executables from all layers (`pflayer`, `amlayer`, `splayer`) and the root directory.
     ```bash
-    make clean
-    ```
-  * **Clear and clean:** Runs the `clean` target and also clears the terminal screen.
-    ```bash
-    make clear
+    sudo apt install build-essential
     ```
 
-### Main Executable
+-----
 
-> **Important Note:** The `make` and `make run` commands are based on the `toydb.out` target, which compiled using `main.c`. We have to add its functionalities e.g. query processor
+### Dependency Breakdown
 
-  * **Build `toydb.out`:**
-    ```bash
-    make
-    ```
-  * **Run `toydb.out`:**
-    ```bash
-    make run
-    ```
+  * **`build-essential`**: Installs `make` and the `gcc` compiler, which are required to build the project from the `Makefile`s.
+
+-----
+
+### Make commands to Build and Run toydb
+
+All commands can be run from this directory. They will be forwarded to the `Makefile` inside `toydb/`.
+
+  * `make` or `make toydb`: Builds the main `toydb.out` executable by building all layers.
+  * `make run`: Builds and then runs `toydb.out`.
+  * `make clean`: Removes `toydb.out` and all build artifacts from all layers.
+  * `make clear`: Runs `make clean` and then clears the terminal.
+
+### Test Commands
+
+This is the primary way to test the functionality of each layer. These commands build and run specific test executables.
+
+  * `make testall`: Runs all tests from all layers (`am`, `pf`, and `sp`).
+
+  * **PF Layer Tests:**
+
+      * `make pf_testpf`: Runs the main `testpf` from the `pflayer`.
+      * `make pf_testhash`: Runs the `testhash` from the `pflayer`.
+      * `make pf_testbuf`: Runs the `testbuf` (buffer manager test) from the `pflayer`.
+
+  * **SP Layer Tests:**
+
+      * `make sp_testsp`: Runs the main `testsp` from the `splayer`.
+      * `make sp_testconvert`: Runs `testconvert` from the `splayer`.
+      * `make sp_testfind`: Runs `testfind` from the `splayer`.
+      * `make sp_testdelete`: Runs `testdelete` from the `splayer`.
+      * `make sp_testscan`: Runs `testscan` from the `splayer`.
+      * `make sp_testanalyze`: Runs `testanalyze` from the `splayer`.
+
+  * **AM Layer Tests:**
+
+      * `make am_test1`: Runs `test1` from the `amlayer`.
+      * `make am_test2`: Runs `test2` from the `amlayer`.
+      * `make am_test3`: Runs `test3` from the `amlayer`.
+
+-----
+
+## The Layered Architecture Philosophy
+
+The `toydb` project is split into three distinct layers to enforce a clean separation of concerns, mimicking a real-world database storage engine.
+
+  * **`toydb/pflayer` (Page File Layer):** This is the **foundation** of the database. Its only job is to manage files on disk and provide a buffer pool (an in-memory cache of disk pages, likely using an LRU policy). It provides an API to get a page (e.g., `PF_GetNextPage`), release a page (`PF_UnfixPage`), etc. It knows nothing about the *content* of the pages; to the `pflayer`, a page is just an opaque block of 4096 bytes.
+
+  * **`toydb/splayer` (Slotted Page Layer):** This is a **client** of the `pflayer`. It requests new pages from `pflayer` and then formats them with a "slotted page" structure. This structure allows it to store, delete, and manage variable-sized records efficiently within a single page. It provides an API to insert a record, delete a record, etc.
+
+  * **`toydb/amlayer` (Access Method Layer):** This is also a **client** of the `pflayer`. It requests pages from `pflayer` to build and maintain a B+ Tree index. The nodes of the B+ Tree are stored within these pages. This layer provides a high-level API for key-based operations: insert a key-value pair, delete by key, and scan for a range of keys.
+
+This separation allows the `pflayer` (the most complex part) to be developed and tested independently. The `amlayer` and `splayer` can then be built on top, trusting that the `pflayer` will correctly handle all file I/O and buffering. The final `toydb.out` executable links all three compiled layer objects (`pflayer.o`, `splayer.o`, `amlayer.o`) together with `main.c` to create the full program.
+
+-----
+
+## About ToyDB
+
+ToyDB is a re-implementation of the core storage engine of a database, inspired by projects used in university-level DBMS courses. The goal is not to build a full-featured SQL database, but to understand the "bottom half" of a DBMS: how data is physically laid out on disk, how it is cached in memory, how records are managed, and how indexes (like B+ Trees) are built to provide efficient access to that data.

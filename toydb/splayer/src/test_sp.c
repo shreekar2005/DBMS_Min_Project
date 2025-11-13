@@ -9,7 +9,6 @@
 #include "../../pflayer/include/pf.h"
 #include "../include/sp.h" // Slotted Page header
 
-
 int main(void)
 {
     int fd;
@@ -23,7 +22,7 @@ int main(void)
     printf("--- Slotted Page Test Program ---\n");
 
     // 1. Initialize the PF Layer
-    PF_Init(20,0);
+    PF_Init(20, 0);
 
     // 2. Create a test file
     printf("Creating test file 'test_sp_file.tdb'...\n");
@@ -61,9 +60,9 @@ int main(void)
     // 6. Test Insertion
     printf("Testing record insertion...\n");
 
-    char *s1 = "100;Joe;ComputerScience";                 // Length 23
-    char *s2 = "200;Chandrasekhar;ElectricalEngineering"; // Length 37
-    char *s3 = "300;Smith;Mechanical";                    // Length 18
+    char *s1 = "00001001;abhas@aero.iitb.ac.in;;";  // Length 23
+    char *s2 = "00001002;jain0ua@ccs.iitb.ac.in;;"; // Length 37
+    char *s3 = "00001003;naik0ua@ccs.iitb.ac.in;;"; // Length 18
 
     int slot1 = SP_InsertRecord(pagePtr, s1, strlen(s1));
     printf("Inserted '%s' into Slot %d. Free space: %d\n", s1, slot1, SP_GetFreeSpace(pagePtr));
