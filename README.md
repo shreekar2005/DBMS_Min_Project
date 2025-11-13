@@ -106,20 +106,14 @@ This is the primary way to test the functionality of each layer. These commands 
 
 -----
 
-## The Layered Architecture Philosophy
+## The Layered Architecture Philosophy of ToyDB
 
 The `toydb` project is split into three distinct layers to enforce a clean separation of concerns, mimicking a real-world database storage engine.
 
-  * **`toydb/pflayer` (Page File Layer):** This is the **foundation** of the database. Its only job is to manage files on disk and provide a buffer pool (an in-memory cache of disk pages, likely using an LRU policy). It provides an API to get a page (e.g., `PF_GetNextPage`), release a page (`PF_UnfixPage`), etc. It knows nothing about the *content* of the pages; to the `pflayer`, a page is just an opaque block of 4096 bytes.
+  * **`toydb/pflayer` (Page File Layer):** This is the **foundation** of the database. Its only job is to manage files on disk and provide a buffer pool (an in-memory cache of disk pages, likely using an LRU and MRU policy). It provides an API to get a page (e.g., `PF_GetNextPage`), release a page (`PF_UnfixPage`), etc. It knows nothing about the *content* of the pages; to the `pflayer`, a page is just an opaque block of 4096 bytes.
 
   * **`toydb/splayer` (Slotted Page Layer):** This is a **client** of the `pflayer`. It requests new pages from `pflayer` and then formats them with a "slotted page" structure. This structure allows it to store, delete, and manage variable-sized records efficiently within a single page. It provides an API to insert a record, delete a record, etc.
 
   * **`toydb/amlayer` (Access Method Layer):** This is also a **client** of the `pflayer`. It requests pages from `pflayer` to build and maintain a B+ Tree index. The nodes of the B+ Tree are stored within these pages. This layer provides a high-level API for key-based operations: insert a key-value pair, delete by key, and scan for a range of keys.
 
 This separation allows the `pflayer` (the most complex part) to be developed and tested independently. The `amlayer` and `splayer` can then be built on top, trusting that the `pflayer` will correctly handle all file I/O and buffering. The final `toydb.out` executable links all three compiled layer objects (`pflayer.o`, `splayer.o`, `amlayer.o`) together with `main.c` to create the full program.
-
------
-
-## About ToyDB
-
-ToyDB is a re-implementation of the core storage engine of a database, inspired by projects used in university-level DBMS courses. The goal is not to build a full-featured SQL database, but to understand the "bottom half" of a DBMS: how data is physically laid out on disk, how it is cached in memory, how records are managed, and how indexes (like B+ Trees) are built to provide efficient access to that data.
