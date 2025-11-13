@@ -2,7 +2,7 @@
  * @file test_spinsert.c
  * @brief Test driver for the SP_InsertRecordByContent function.
  *
- * Assumes 'testout.tdb' already exists (e.g., from 'make testconvert').
+ * Assumes 'testdata.tdb' already exists (e.g., from 'make testconvert').
  */
 
 #include <stdio.h>
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    const char *tdbFile = "testout.tdb";
+    const char *tdbFile = "testdata.tdb";
     int numBuffers = atoi(argv[1]);
     int strategy = atoi(argv[2]);
 

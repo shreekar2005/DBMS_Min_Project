@@ -17,12 +17,13 @@
 # make pf_testhash     : Runs 'testhash' from the 'pflayer' directory.
 # make pf_testbuf      : Runs 'testbuf' from the 'pflayer' directory.
 #
-# make sp_testsp       : Runs 'testsp' from the 'splayer' directory.
-# make sp_testconvert  : Runs 'testconvert' from the 'splayer' directory.
-# make sp_testfind     : Runs 'testfind' from the 'splayer' directory.
-# make sp_testdelete   : Runs 'testdelete' from the 'splayer' directory.
-# make sp_testscan     : Runs 'testscan' from the 'splayer' directory.
-# make sp_testanalyze     : Runs 'testanalyze' from the 'splayer' directory.
+# make sp_testsp       	: Runs 'testsp' from the 'splayer' directory.
+# make sp_testconvert  	: Runs 'testconvert' from the 'splayer' directory.
+# make sp_testfind     	: Runs 'testfind' from the 'splayer' directory.
+# make sp_testinsert	: Runs 'testinsert' from the 'splayer' directory.
+# make sp_testdelete   	: Runs 'testdelete' from the 'splayer' directory.
+# make sp_testscan     	: Runs 'testscan' from the 'splayer' directory.
+# make sp_testanalyze   : Runs 'testanalyze' from the 'splayer' directory.
 
 CC = cc
 CFLAGS = -g
@@ -40,7 +41,7 @@ TARGET = toydb.out
 .PHONY: toydb run clear clean testall
 .PHONY: am_test1 am_test2 am_test3 am_testcreateindex am_testcreateindexincremental am_testbulkload
 .PHONY: pf_testpf pf_testhash pf_testbuf
-.PHONY: sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan
+.PHONY: sp_testsp sp_testconvert sp_testfind sp_testinsert sp_testdelete sp_testscan 
 
 #default make
 toydb: $(TARGET)
@@ -71,7 +72,7 @@ clean:
 
 ################################### TESTS #####################################
 
-testall: pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan sp_testanalyze am_test1 am_test2 am_test3 am_testcreateindex am_testcreateindexincremental am_testbulkload
+testall: pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testinsert sp_testdelete sp_testscan sp_testanalyze am_test1 am_test2 am_test3 am_testcreateindex am_testcreateindexincremental am_testbulkload
 
 pf_testpf:
 	$(MAKE) -C pflayer testpf

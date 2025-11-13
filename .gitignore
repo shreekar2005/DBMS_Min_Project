@@ -59,3 +59,7 @@ build/
 
 # Custom toydb database files
 *.tdb
+
+# For some files in amlayer
+testdata_sorted.txt
+*.0

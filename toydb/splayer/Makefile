@@ -67,7 +67,7 @@ $(BUILD_DIR)/spinsert.o: $(SRC_DIR)/spinsert.c
 clear: clean
 	clear
 clean:
-	@echo "--- Cleaning build directory and testout.tdb ---"
+	@echo "--- Cleaning build directory and testdata.tdb ---"
 	rm -rf $(BUILD_DIR)
 	rm -f *.tdb
 
@@ -138,7 +138,7 @@ TEST_SRC_INSERT = $(SRC_DIR)/test_spinsert.c
 TEST_OBJ_INSERT = $(BUILD_DIR)/testinsert.o
 TEST_BIN_INSERT = $(BUILD_DIR)/testinsert
 
-testinsert: $(BUILD_DIR) $(TEST_BIN_INSERT) testout.tdb
+testinsert: $(BUILD_DIR) $(TEST_BIN_INSERT) testdata.tdb
 	$(TEST_BIN_INSERT) 20 0
 
 $(TEST_BIN_INSERT): $(TEST_OBJ_INSERT) $(TARGET) $(PFLAYER_LIB)
