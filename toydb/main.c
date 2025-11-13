@@ -13,8 +13,6 @@ int main(int argc, char *argv[]) {
     // PF_Init(max_num_page_for_buffer, replacement_strat);
     
     printf("ToyDB is ready.\n");
-
-    execlp("make", "make", "sp_testsp", NULL);
     
     printf("query loop....\n");
 
