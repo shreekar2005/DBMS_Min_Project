@@ -89,7 +89,7 @@ TEST_OBJ_CONVERT = $(BUILD_DIR)/testconvert.o
 TEST_BIN_CONVERT = $(BUILD_DIR)/testconvert
 
 testconvert: $(BUILD_DIR) $(TEST_BIN_CONVERT) testin.txt
-	$(TEST_BIN_CONVERT) testin.txt testout.tdb 20 0
+	$(TEST_BIN_CONVERT) 20 0
 
 $(TEST_BIN_CONVERT): $(TEST_OBJ_CONVERT) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -103,7 +103,7 @@ TEST_OBJ_SCAN = $(BUILD_DIR)/testscan.o
 TEST_BIN_SCAN = $(BUILD_DIR)/testscan
 
 testscan: $(BUILD_DIR) $(TEST_BIN_SCAN) testout.tdb
-	$(TEST_BIN_SCAN) testout.tdb 20 0
+	$(TEST_BIN_SCAN) 20 0
 
 $(TEST_BIN_SCAN): $(TEST_OBJ_SCAN) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -117,7 +117,7 @@ TEST_OBJ_FIND = $(BUILD_DIR)/testfind.o
 TEST_BIN_FIND = $(BUILD_DIR)/testfind
 
 testfind: $(BUILD_DIR) $(TEST_BIN_FIND) testout.tdb
-	$(TEST_BIN_FIND) testout.tdb "00305022;bpradeep@cse.iitb.ac.in;;" 20 0
+	$(TEST_BIN_FIND) 20 0
 
 $(TEST_BIN_FIND): $(TEST_OBJ_FIND) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -131,7 +131,7 @@ TEST_OBJ_DELETE = $(BUILD_DIR)/testdelete.o
 TEST_BIN_DELETE = $(BUILD_DIR)/testdelete
 
 testdelete: $(BUILD_DIR) $(TEST_BIN_DELETE) testout.tdb
-	$(TEST_BIN_DELETE) testout.tdb "00305022;bpradeep@cse.iitb.ac.in;;" 20 0
+	$(TEST_BIN_DELETE) 20 0
 
 $(TEST_BIN_DELETE): $(TEST_OBJ_DELETE) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -145,7 +145,7 @@ TEST_OBJ_ANALYZE = $(BUILD_DIR)/test_spanalyze.o
 TEST_BIN_ANALYZE = $(BUILD_DIR)/testanalyze
 
 testanalyze: $(BUILD_DIR) $(TEST_BIN_ANALYZE) testout.tdb
-	$(TEST_BIN_ANALYZE) testout.tdb 20 0
+	$(TEST_BIN_ANALYZE) 20 0
 
 $(TEST_BIN_ANALYZE): $(TEST_OBJ_ANALYZE) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^

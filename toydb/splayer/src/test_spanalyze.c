@@ -14,21 +14,21 @@
 #include "../../pflayer/include/pfbuf.h" // For STRATEGY defines
 
 void print_usage(const char *progName) {
-    fprintf(stderr, "Usage: %s <tdb_file> <num_buffers> <strategy>\n", progName);
+    fprintf(stderr, "Usage: %s <num_buffers> <strategy>\n", progName);
     fprintf(stderr, "  <strategy>: 0 for LRU, 1 for MRU\n");
 }
 
 
 int main(int argc, char *argv[]) {
     // --- 1. Argument Parsing ---
-    if (argc != 4) {
+    if (argc != 3) {
         print_usage(argv[0]);
         return 1;
     }
 
-    const char *tdbFile = argv[1];
-    int numBuffers = atoi(argv[2]);
-    int strategy = atoi(argv[3]);
+    const char *tdbFile = "testout.tdb";
+    int numBuffers = atoi(argv[1]);
+    int strategy = atoi(argv[2]);
 
     if (numBuffers <= 0) {
         fprintf(stderr, "Error: Number of buffers must be greater than 0.\n");

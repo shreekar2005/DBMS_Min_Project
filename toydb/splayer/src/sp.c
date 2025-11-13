@@ -101,7 +101,7 @@ int SP_DeleteRecord(char *pagePtr, int slotID)
 
     slots[slotID].offset = -1; 
     slots[slotID].length = 0;
-
+    num_logical_writes++; // added by shreekar :)
     return SPE_OK;
 }
 

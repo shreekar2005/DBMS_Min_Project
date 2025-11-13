@@ -15,25 +15,33 @@
  * @param progName The name of the program (argv[0]).
  */
 void print_usage(const char *progName) {
-    fprintf(stderr, "Usage: %s <tdb_file> \"<record_to_delete>\" <num_buffers> <strategy>\n", progName);
+    fprintf(stderr, "Usage: %s <num_buffers> <strategy>\n", progName);
     fprintf(stderr, "  <strategy>: 0 for LRU, 1 for MRU\n");
-    fprintf(stderr, "  Note: Enclose the record in quotes.\n");
+    // fprintf(stderr, "  Note: Enclose the record in quotes.\n"); // Commented out as record is hardcoded
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 5) {
+    if (argc != 3) { // Changed from 5 to 3
         print_usage(argv[0]);
         return 1;
     }
 
-    const char *tdbFile = argv[1];
-    const char *recordToFind = argv[2];
-    int numBuffers = atoi(argv[3]);
-    int strategy = atoi(argv[4]);
+    const char *tdbFile = "testout.tdb"; // Hardcoded
+    // const char *recordToFind = argv[2]; // Removed
+    int numBuffers = atoi(argv[1]); // Changed from argv[3]
+    int strategy = atoi(argv[2]); // Changed from argv[4]
 
-    printf("--- Find and Delete Record in '%s' ---\n", tdbFile);
-    printf("Record to delete: \"%s\"\n", recordToFind);
+    // Array of records to delete
+    const char *recordsToDelete[] = {
+        "00001001;abhas@aero.iitb.ac.in;;",
+        "00001002;jain0ua@ccs.iitb.ac.in;;",
+        "00001003;naik0ua@ccs.iitb.ac.in;;"
+    };
+    int numRecords = sizeof(recordsToDelete) / sizeof(recordsToDelete[0]);
+    int all_deletions_ok = 1; // Flag to track success
 
+    printf("--- Find and Delete Records in '%s' ---\n", tdbFile);
+    
     PF_Init(numBuffers, strategy);
 
     int tdb_fd = PF_OpenFile(tdbFile);
@@ -42,16 +50,25 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int err = SP_DeleteRecordByContent(tdb_fd, recordToFind);
+    for (int i = 0; i < numRecords; i++) {
+        const char *recordToFind = recordsToDelete[i];
+        printf("\nRecord to delete: \"%s\"\n", recordToFind);
 
-    if (err == SPE_OK) {
-        printf("--- Deletion complete ---\n");
-    } else if (err == SPE_RECORD_NOT_FOUND) {
-        printf("\n--- Record not found, no deletion performed ---\n");
-    } else {
-        fprintf(stderr, "\n--- Error during deletion ---\n");
+        int err = SP_DeleteRecordByContent(tdb_fd, recordToFind);
+
+        if (err == SPE_OK) {
+            printf("--- Deletion complete ---\n");
+        } else if (err == SPE_RECORD_NOT_FOUND) {
+            printf("--- Record not found, no deletion performed ---\n");
+            all_deletions_ok = 0; // Mark as failed
+        } else {
+            fprintf(stderr, "--- Error during deletion ---\n");
+            all_deletions_ok = 0; // Mark as failed
+        }
     }
     
+    printf("\n--- All deletions attempted ---\n");
+
     if (PF_CloseFile(tdb_fd) != PFE_OK) {
         PF_PrintError("Error: PF_CloseFile");
         return 1;
@@ -59,5 +76,5 @@ int main(int argc, char *argv[]) {
 
     PF_PrintStats();
 
-    return (err == SPE_OK) ? 0 : 1;
+    return (all_deletions_ok) ? 0 : 1;
 }

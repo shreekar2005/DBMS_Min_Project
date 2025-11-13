@@ -587,9 +587,9 @@ void PF_PrintStats(void)
 	printf("--- Buffer Manager Statistics ---\n");
 	printf("Logical Reads:    %ld\n", num_logical_reads);
 	printf("Logical Writes:   %ld\n", num_logical_writes);
-	printf("Buffer Hits:      %ld\n", num_buffer_hits);
 	printf("Physical Reads:   %ld\n", num_physical_reads);
 	printf("Physical Writes:  %ld\n", num_physical_writes);
+	printf("Buffer Hits:      %ld\n", num_buffer_hits);
 
 	long total_logical = num_logical_reads + num_logical_writes;
 	if (total_logical > 0)

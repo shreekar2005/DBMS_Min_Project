@@ -16,21 +16,21 @@
  */
 void print_usage(const char *progName)
 {
-    fprintf(stderr, "Usage: %s <input_txt_file> <output_tdb_file> <num_buffers> <strategy>\n", progName);
+    fprintf(stderr, "Usage: %s <num_buffers> <strategy>\n", progName);
     fprintf(stderr, "  <strategy>: 0 for LRU, 1 for MRU\n");
 }
 
 int main(int argc, char *argv[])
 {
-    if (argc != 5) {
+    if (argc != 3) {
         print_usage(argv[0]);
         return 1;
     }
 
-    const char *inputTxtFile = argv[1];
-    const char *outputTdbFile = argv[2];
-    int numBuffers = atoi(argv[3]);
-    int strategy = atoi(argv[4]);
+    const char *inputTxtFile = "testin.txt";
+    const char *outputTdbFile = "testout.tdb";
+    int numBuffers = atoi(argv[1]);
+    int strategy = atoi(argv[2]);
 
     if (numBuffers <= 0) {
         fprintf(stderr, "Error: Number of buffers must be greater than 0.\n");
