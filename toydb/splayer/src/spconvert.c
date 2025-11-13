@@ -83,12 +83,17 @@ int SPconvertTxtToTdb(const char *inputTxtFile, const char *outputTdbFile)
         err = PF_UnfixPage(tdb_fd, currentPageNum, TRUE);
         if (err != PFE_OK) {
             PF_PrintError("SPconvertTxtToTdb: PF_UnfixPage (last)");
+            PF_CloseFile(tdb_fd); 
+            fclose(txtFile);
+            return err;
         }
     }
 
     err = PF_CloseFile(tdb_fd);
     if (err != PFE_OK) {
         PF_PrintError("SPconvertTxtToTdb: PF_CloseFile");
+        fclose(txtFile); // Still close the text file
+        return err;
     }
 
     fclose(txtFile);

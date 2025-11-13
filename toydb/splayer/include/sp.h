@@ -55,7 +55,7 @@ void SP_InitPage(char *pagePtr);
  * @param recLen Length of the record.
  * @return The slotID if successful, or an error code otherwise.
  */
-int SP_InsertRecord(char *pagePtr, char *record, int recLen);
+int SP_InsertRecord(char *pagePtr, const char *record, int recLen);
 
 /**
  * @brief Deletes a record from a given slot.
@@ -129,6 +129,19 @@ int SP_FindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *ou
  * @return SPE_OK if found and deleted, SPE_RECORD_NOT_FOUND if not found, or an error code.
  */
 int SP_DeleteRecordByContent(int tdb_fd, const char *recordToFind);
+
+
+/**
+ * @brief Inserts a new record into the .tdb file.
+ *
+ * Tries to insert into the last page. If full, allocates a new
+ * page and inserts there.
+ * @param tdb_fd File descriptor for the open .tdb file.
+ * @param record The byte content of the record to insert.
+ * @param recLen The length of the record.
+ * @return SPE_OK on success, or an error code.
+ */
+int SP_InsertRecordByContent(int tdb_fd, const char *record, int recLen);
 
 /**
  * @brief Analyzes space utilization of a .tdb file and prints a report.

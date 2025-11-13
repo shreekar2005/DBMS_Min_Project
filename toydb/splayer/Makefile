@@ -7,9 +7,10 @@
 # Tests
 #
 # make testsp            : Builds and runs the 'testsp' executable (build/testsp).
-# make testconvert       : Builds and runs 'testconvert' to create 'testdata.tdb' from 'testdata.txt'.
+# make testconvert       : Builds 'testdata.tdb' from 'testdata.txt'.
 # make testscan          : Builds and runs 'testscan' on 'testdata.tdb'.
 # make testfind          : Builds and runs 'testfind' to search for a record in 'testdata.tdb'.
+# make testinsert        : Builds and runs 'testinsert' to add a record to 'testdata.tdb'.
 # make testdelete        : Builds and runs 'testdelete' to delete a record from 'testdata.tdb'.
 # make testanalyze       : Builds and runs the 'testanalyze' executable on 'testdata.tdb'.
 
@@ -20,12 +21,14 @@ INCLUDE_DIR = include
 
 SRC_DIR = src
 BUILD_DIR = build
-LIB_SRC = $(SRC_DIR)/sp.c $(SRC_DIR)/spconvert.c $(SRC_DIR)/spscan.c $(SRC_DIR)/spfind.c $(SRC_DIR)/spdelete.c $(SRC_DIR)/spanalyze.c
-LIB_OBJ = $(BUILD_DIR)/sp.o $(BUILD_DIR)/spconvert.o $(BUILD_DIR)/spscan.o $(BUILD_DIR)/spfind.o $(BUILD_DIR)/spdelete.o $(BUILD_DIR)/spanalyze.o
+# Add spinsert.c to LIB_SRC
+LIB_SRC = $(SRC_DIR)/sp.c $(SRC_DIR)/spconvert.c $(SRC_DIR)/spscan.c $(SRC_DIR)/spfind.c $(SRC_DIR)/spdelete.c $(SRC_DIR)/spanalyze.c $(SRC_DIR)/spinsert.c
+# Add spinsert.o to LIB_OBJ
+LIB_OBJ = $(BUILD_DIR)/sp.o $(BUILD_DIR)/spconvert.o $(BUILD_DIR)/spscan.o $(BUILD_DIR)/spfind.o $(BUILD_DIR)/spdelete.o $(BUILD_DIR)/spanalyze.o $(BUILD_DIR)/spinsert.o
 TARGET = $(BUILD_DIR)/splayer.o
 PFLAYER_LIB = ../pflayer/build/pflayer.o
 
-.PHONY: splayer clear clean testsp testconvert testscan testfind testdelete testanalyze
+.PHONY: splayer clear clean testsp testconvert testscan testfind testdelete testinsert testanalyze
 
 #default make
 splayer: $(BUILD_DIR) $(TARGET)
@@ -57,9 +60,14 @@ $(BUILD_DIR)/spdelete.o: $(SRC_DIR)/spdelete.c
 $(BUILD_DIR)/spanalyze.o: $(SRC_DIR)/spanalyze.c
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
+# New rule for spinsert.o
+$(BUILD_DIR)/spinsert.o: $(SRC_DIR)/spinsert.c
+	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+
 clear: clean
 	clear
 clean:
+	@echo "--- Cleaning build directory and testout.tdb ---"
 	rm -rf $(BUILD_DIR)
 	rm -f *.tdb
 
@@ -123,6 +131,20 @@ $(TEST_BIN_FIND): $(TEST_OBJ_FIND) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
 
 $(BUILD_DIR)/testfind.o: $(TEST_SRC_FIND)
+	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+
+# test_spinsert (NEW)
+TEST_SRC_INSERT = $(SRC_DIR)/test_spinsert.c
+TEST_OBJ_INSERT = $(BUILD_DIR)/testinsert.o
+TEST_BIN_INSERT = $(BUILD_DIR)/testinsert
+
+testinsert: $(BUILD_DIR) $(TEST_BIN_INSERT) testout.tdb
+	$(TEST_BIN_INSERT) 20 0
+
+$(TEST_BIN_INSERT): $(TEST_OBJ_INSERT) $(TARGET) $(PFLAYER_LIB)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(BUILD_DIR)/testinsert.o: $(TEST_SRC_INSERT)
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
 
 # test_spdelete
