@@ -11,26 +11,62 @@
 #include "../../pflayer/include/pfbuf.h" // For STRATEGY defines
 
 /**
+ * Replaces the extension of a filename with ".tdb" using standard library functions.
+ *
+ * @param input     The source filename string (e.g., "testinput.txt").
+ * @param output    The buffer to write the result to (e.g., "testinput.tdb").
+ * @param max_len   The total size of the output buffer.
+ * @return          0 on success, -1 if the output buffer is too small.
+ */
+int replace_ext_to_tdb_stdlib(const char* input, char* output, int max_len) {
+    const char* last_dot = strrchr(input, '.');
+    int base_len;
+    if (last_dot != NULL && last_dot != input) {
+        base_len = last_dot - input;
+    } else {
+        base_len = strlen(input);
+    }
+    if (base_len + 5 > max_len) {
+        if (max_len > 0) output[0] = '\0';
+        return -1;
+    }
+    strncpy(output, input, base_len);
+    output[base_len] = '.';
+    output[base_len + 1] = 't';
+    output[base_len + 2] = 'd';
+    output[base_len + 3] = 'b';
+    output[base_len + 4] = '\0';
+    return 0;
+}
+
+/**
  * @brief Prints usage instructions and exits.
  * @param progName The name of the program (argv[0]).
  */
 void print_usage(const char *progName)
 {
-    fprintf(stderr, "Usage: %s <num_buffers> <strategy>\n", progName);
+    fprintf(stderr, "Usage: %s <file.txt> <num_buffers> <strategy>\n", progName);
     fprintf(stderr, "  <strategy>: 0 for LRU, 1 for MRU\n");
 }
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3) {
+    if (argc != 4) {
         print_usage(argv[0]);
         return 1;
     }
 
-    const char *inputTxtFile = "testin.txt";
-    const char *outputTdbFile = "testout.tdb";
-    int numBuffers = atoi(argv[1]);
-    int strategy = atoi(argv[2]);
+    const char *inputTxtFile = argv[1];
+    
+    char outputTdbFilename[256];
+    if (replace_ext_to_tdb_stdlib(inputTxtFile, outputTdbFilename, 256) != 0) {
+        fprintf(stderr, "Error: Output filename buffer is too small.\n");
+        return 1;
+    }
+
+    const char *outputTdbFile = outputTdbFilename;
+    int numBuffers = atoi(argv[2]);
+    int strategy = atoi(argv[3]);
 
     if (numBuffers <= 0) {
         fprintf(stderr, "Error: Number of buffers must be greater than 0.\n");

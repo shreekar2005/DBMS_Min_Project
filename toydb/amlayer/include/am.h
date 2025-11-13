@@ -86,6 +86,7 @@ extern int AM_Errno;       /* last error in AM layer */
 #define AME_INVALIDATTRTYPE -9
 #define AME_FD -10
 #define AME_INVALIDVALUE -11
+#define AME_BULKLOADFAILED -12 // Added for bulk load
 
 /****************************************************************************
                             AM Layer Interface
@@ -403,6 +404,18 @@ void AM_topofStack(int *pageNum, int *offset);
  * @brief Empties the stack.
  */
 void AM_EmptyStack(void);
+
+/* am_bulkload.c */
+/**
+ * @brief Efficiently builds an index from a pre-sorted data file.
+ * @param amFileDesc File descriptor for the index.
+ * @param spFileDesc File descriptor for the sorted splayer data file.
+ * @param attrType 'c' for char, 'i' for int, 'f' for float.
+ * @param attrLength 4 for 'i' or 'f', 1-255 for 'c'.
+ * @return AME_OK on success, or an error code.
+ */
+int AM_BulkLoad(int amFileDesc, int spFileDesc, char attrType, int attrLength);
+
 
 /* misc.c */
 /**

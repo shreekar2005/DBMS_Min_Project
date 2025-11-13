@@ -38,7 +38,7 @@ PFLAYER_OBJ = $(PFLAYER_DIR)/build/pflayer.o
 TARGET = toydb.out
 
 .PHONY: toydb run clear clean testall
-.PHONY: am_test1 am_test2 am_test3
+.PHONY: am_test1 am_test2 am_test3 am_testcreateindex am_testcreateindexincremental am_testbulkload
 .PHONY: pf_testpf pf_testhash pf_testbuf
 .PHONY: sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan
 
@@ -71,7 +71,7 @@ clean:
 
 ################################### TESTS #####################################
 
-testall: pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan sp_testanalyze am_test1 am_test2 am_test3 
+testall: pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan sp_testanalyze am_test1 am_test2 am_test3 am_testcreateindex am_testcreateindexincremental am_testbulkload
 
 pf_testpf:
 	$(MAKE) -C pflayer testpf
@@ -99,3 +99,9 @@ am_test2:
 	$(MAKE) -C amlayer test2
 am_test3:
 	$(MAKE) -C amlayer test3
+am_testcreateindex:
+	$(MAKE) -C amlayer testcreateindex
+am_testcreateindexincremental: 
+	$(MAKE) -C amlayer testcreateindexincremental
+am_testbulkload:
+	$(MAKE) -C amlayer testbulkload

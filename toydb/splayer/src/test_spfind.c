@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    const char *tdbFile = "testout.tdb"; // Hardcoded
+    const char *tdbFile = "testdata.tdb"; // Hardcoded
     // const char *recordToFind = argv[2]; // Removed
     int numBuffers = atoi(argv[1]); // Changed from argv[3]
     int strategy = atoi(argv[2]); // Changed from argv[4]

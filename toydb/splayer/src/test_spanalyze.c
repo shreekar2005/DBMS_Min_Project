@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    const char *tdbFile = "testout.tdb";
+    const char *tdbFile = "testdata.tdb";
     int numBuffers = atoi(argv[1]);
     int strategy = atoi(argv[2]);
 

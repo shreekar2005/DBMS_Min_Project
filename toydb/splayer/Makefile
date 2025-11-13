@@ -1,17 +1,17 @@
 # Some make command info :
 #
 # make (or make splayer) : Builds the 'splayer' relocatable object (build/splayer.o).
-# make clean             : Removes the entire 'build/' directory and 'testout.tdb'.
+# make clean             : Removes the entire 'build/' directory and 'testdata.tdb'.
 # make clear             : Runs 'make clean' and then clears the terminal.
 #
 # Tests
 #
 # make testsp            : Builds and runs the 'testsp' executable (build/testsp).
-# make testconvert       : Builds and runs 'testconvert' to create 'testout.tdb' from 'testin.txt'.
-# make testscan          : Builds and runs 'testscan' on 'testout.tdb'.
-# make testfind          : Builds and runs 'testfind' to search for a record in 'testout.tdb'.
-# make testdelete        : Builds and runs 'testdelete' to delete a record from 'testout.tdb'.
-# make testanalyze       : Builds and runs the 'testanalyze' executable on 'testout.tdb'.
+# make testconvert       : Builds and runs 'testconvert' to create 'testdata.tdb' from 'testdata.txt'.
+# make testscan          : Builds and runs 'testscan' on 'testdata.tdb'.
+# make testfind          : Builds and runs 'testfind' to search for a record in 'testdata.tdb'.
+# make testdelete        : Builds and runs 'testdelete' to delete a record from 'testdata.tdb'.
+# make testanalyze       : Builds and runs the 'testanalyze' executable on 'testdata.tdb'.
 
 
 CC = cc
@@ -61,10 +61,10 @@ clear: clean
 	clear
 clean:
 	rm -rf $(BUILD_DIR)
-	rm -f testout.tdb
+	rm -f *.tdb
 
 #Needed by some tests (e.g. delete, scan, find)
-testout.tdb: 
+testdata.tdb: 
 	$(MAKE) testconvert
 
 ################################### TESTS #####################################
@@ -88,8 +88,8 @@ TEST_SRC_CONVERT = $(SRC_DIR)/test_spconvert.c
 TEST_OBJ_CONVERT = $(BUILD_DIR)/testconvert.o
 TEST_BIN_CONVERT = $(BUILD_DIR)/testconvert
 
-testconvert: $(BUILD_DIR) $(TEST_BIN_CONVERT) testin.txt
-	$(TEST_BIN_CONVERT) 20 0
+testconvert: $(BUILD_DIR) $(TEST_BIN_CONVERT) testdata.txt
+	$(TEST_BIN_CONVERT) testdata.txt 20 0
 
 $(TEST_BIN_CONVERT): $(TEST_OBJ_CONVERT) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -102,8 +102,8 @@ TEST_SRC_SCAN = $(SRC_DIR)/test_spscan.c
 TEST_OBJ_SCAN = $(BUILD_DIR)/testscan.o
 TEST_BIN_SCAN = $(BUILD_DIR)/testscan
 
-testscan: $(BUILD_DIR) $(TEST_BIN_SCAN) testout.tdb
-	$(TEST_BIN_SCAN) 20 0
+testscan: $(BUILD_DIR) $(TEST_BIN_SCAN) testdata.tdb
+	$(TEST_BIN_SCAN) testdata.tdb 20 0
 
 $(TEST_BIN_SCAN): $(TEST_OBJ_SCAN) $(TARGET) $(PFLAYER_LIB)
 	$(CC) $(CFLAGS) -o $@ $^
@@ -116,7 +116,7 @@ TEST_SRC_FIND = $(SRC_DIR)/test_spfind.c
 TEST_OBJ_FIND = $(BUILD_DIR)/testfind.o
 TEST_BIN_FIND = $(BUILD_DIR)/testfind
 
-testfind: $(BUILD_DIR) $(TEST_BIN_FIND) testout.tdb
+testfind: $(BUILD_DIR) $(TEST_BIN_FIND) testdata.tdb
 	$(TEST_BIN_FIND) 20 0
 
 $(TEST_BIN_FIND): $(TEST_OBJ_FIND) $(TARGET) $(PFLAYER_LIB)
@@ -130,7 +130,7 @@ TEST_SRC_DELETE = $(SRC_DIR)/test_spdelete.c
 TEST_OBJ_DELETE = $(BUILD_DIR)/testdelete.o
 TEST_BIN_DELETE = $(BUILD_DIR)/testdelete
 
-testdelete: $(BUILD_DIR) $(TEST_BIN_DELETE) testout.tdb
+testdelete: $(BUILD_DIR) $(TEST_BIN_DELETE) testdata.tdb
 	$(TEST_BIN_DELETE) 20 0
 
 $(TEST_BIN_DELETE): $(TEST_OBJ_DELETE) $(TARGET) $(PFLAYER_LIB)
@@ -144,7 +144,7 @@ TEST_SRC_ANALYZE = $(SRC_DIR)/test_spanalyze.c
 TEST_OBJ_ANALYZE = $(BUILD_DIR)/test_spanalyze.o
 TEST_BIN_ANALYZE = $(BUILD_DIR)/testanalyze
 
-testanalyze: $(BUILD_DIR) $(TEST_BIN_ANALYZE) testout.tdb
+testanalyze: $(BUILD_DIR) $(TEST_BIN_ANALYZE) testdata.tdb
 	$(TEST_BIN_ANALYZE) 20 0
 
 $(TEST_BIN_ANALYZE): $(TEST_OBJ_ANALYZE) $(TARGET) $(PFLAYER_LIB)

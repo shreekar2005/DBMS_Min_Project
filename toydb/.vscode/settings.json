@@ -3,5 +3,8 @@
         "c": "cd $workspaceRoot && make clear && make run",
         "cpp": "cd $workspaceRoot && make clear && make run"
     },
-    "code-runner.runInTerminal": true
+    "code-runner.runInTerminal": true,
+    "files.associations": {
+        "testam.h": "c"
+    }
 }
