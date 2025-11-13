@@ -71,9 +71,9 @@ The `toydb/` directory contains the complete source code for the ToyDB storage e
 ### Make commands to Build and Run toydb
 
 All commands can be run from this directory. They will be forwarded to the `Makefile` inside `toydb/`.
-
-  * `make` or `make toydb`: Builds the main `toydb.out` executable by building all layers.
-  * `make run`: Builds and then runs `toydb.out`.
+  * `make testall`: Runs all tests from every layer
+  * `make` or `make toydb`: Builds the main `toydb.out` executable by building all layers (**PROTOTYPE**).
+  * `make run`: Builds and then runs `toydb.out` (**PROTOTYPE**).
   * `make clean`: Removes `toydb.out` and all build artifacts from all layers.
   * `make clear`: Runs `make clean` and then clears the terminal.
 
@@ -94,6 +94,7 @@ This is the primary way to test the functionality of each layer. These commands 
       * `make sp_testsp`: Runs the main `testsp` from the `splayer`.
       * `make sp_testconvert`: Runs `testconvert` from the `splayer`.
       * `make sp_testfind`: Runs `testfind` from the `splayer`.
+      * `make sp_testinsert`: Runs `testinsert` from the `splayer` directory.
       * `make sp_testdelete`: Runs `testdelete` from the `splayer`.
       * `make sp_testscan`: Runs `testscan` from the `splayer`.
       * `make sp_testanalyze`: Runs `testanalyze` from the `splayer`.
@@ -103,6 +104,9 @@ This is the primary way to test the functionality of each layer. These commands 
       * `make am_test1`: Runs `test1` from the `amlayer`.
       * `make am_test2`: Runs `test2` from the `amlayer`.
       * `make am_test3`: Runs `test3` from the `amlayer`.
+      * `make am_testcreateindex`: Runs `testamcreateindex` from the `amlayer` directory.
+      * `make am_testcreateindexincremental`: Runs `testamcreateindexincremental` from the `amlayer` directory.
+      * `make am_testbulkload`: Runs `testambulkload` from the `amlayer` directory.
 
 -----
 

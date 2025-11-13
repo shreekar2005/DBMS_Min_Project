@@ -9,9 +9,12 @@
 #
 # make testall         : Runs all tests from all layers (am, pf, and sp).
 #
-# make am_test1        : Runs 'test1' from the 'amlayer' directory.
-# make am_test2        : Runs 'test2' from the 'amlayer' directory.
-# make am_test3        : Runs 'test3' from the 'amlayer' directory.
+# make am_test1        					: Runs 'test1' from the 'amlayer' directory.
+# make am_test2        					: Runs 'test2' from the 'amlayer' directory.
+# make am_test3       					: Runs 'test3' from the 'amlayer' directory.
+# make am_testcreateindex 				: Runs 'testamcreateindex' from the 'amlayer' directory.
+# make am_testcreateindexincremental 	: Runs 'testamcreateindexincremental' from the 'amlayer' directory.
+# make am_testbulkload 					: Runs 'testambulkload' from the 'amlayer' directory.
 #
 # make pf_testpf       : Runs 'testpf' from the 'pflayer' directory.
 # make pf_testhash     : Runs 'testhash' from the 'pflayer' directory.
