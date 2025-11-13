@@ -1,12 +1,23 @@
 /**
  * @file sp.c
  * @brief Implementation of slotted page functions.
+ *
+ * This file contains the low-level page management functions and
+ * high-level wrapper functions that call internal helpers.
  */
 
 #include <string.h>
 #include <stdio.h>
-#include "../../pflayer/include/pf.h" // We need PF_PAGE_SIZE
-#include "../include/sp.h" // Our new header
+#include <stdlib.h> 
+#include "../../pflayer/include/pf.h" 
+#include "../include/sp.h" 
+
+// Include all internal helper headers
+#include "../include/spconvert.h"
+#include "../include/spscan.h"
+#include "../include/spfind.h"
+#include "../include/spdelete.h"
+
 
 /* Static function prototypes */
 static PageHeader *getHeader(char *pagePtr);
@@ -33,25 +44,21 @@ static Slot *getSlots(char *pagePtr)
     return (Slot *)(pagePtr + sizeof(PageHeader));
 }
 
+/* --- Low-Level Page Functions (Unchanged) --- */
 
 void SP_InitPage(char *pagePtr)
 {
     PageHeader *header = getHeader(pagePtr);
     header->numSlots = 0;
-    header->freeSpacePtr = PF_PAGE_SIZE; // Free space starts at the very end
+    header->freeSpacePtr = PF_PAGE_SIZE; 
 }
 
 
 int SP_GetFreeSpace(char *pagePtr)
 {
     PageHeader *header = getHeader(pagePtr);
-
-    // Start of the free space "middle"
     int freeSpaceStart = sizeof(PageHeader) + (header->numSlots * sizeof(Slot));
-
-    // End of the free space "middle"
     int freeSpaceEnd = header->freeSpacePtr;
-
     return (freeSpaceEnd - freeSpaceStart);
 }
 
@@ -61,34 +68,23 @@ int SP_InsertRecord(char *pagePtr, char *record, int recLen)
     PageHeader *header = getHeader(pagePtr);
     Slot *slots = getSlots(pagePtr);
 
-    // 1. Calculate required space
-    // We need space for the record data AND a new slot
     int spaceNeeded = recLen + sizeof(Slot);
-
     if (SP_GetFreeSpace(pagePtr) < spaceNeeded)
     {
         return SPE_PAGE_FULL;
     }
 
-    // 2. Find a slot for this record.
-    // For simplicity, we'll just add to the end.
-    // A better way would be to find an empty slot (from a deleted record)
     int newSlotID = header->numSlots;
-
-    // 3. Add the record data
-    // Calculate new start position for data (at the end of the page)
     int dataOffset = header->freeSpacePtr - recLen;
     memcpy(pagePtr + dataOffset, record, recLen);
 
-    // 4. Update the slot
     slots[newSlotID].offset = dataOffset;
     slots[newSlotID].length = recLen;
 
-    // 5. Update the header
     header->numSlots++;
-    header->freeSpacePtr = dataOffset; // Move the free space pointer
+    header->freeSpacePtr = dataOffset; 
 
-    return newSlotID; // Return the new slot number
+    return newSlotID; 
 }
 
 
@@ -102,16 +98,8 @@ int SP_DeleteRecord(char *pagePtr, int slotID)
         return SPE_INVALID_SLOT;
     }
 
-    // "Deletion" is simple: just mark the slot as empty.
-    // The data is still there, but it's now un-referenced "garbage".
-    // This is simple but doesn't reclaim space.
-    // Real databases would do "compaction" later.
-    slots[slotID].offset = -1; // -1 can mean "empty"
+    slots[slotID].offset = -1; 
     slots[slotID].length = 0;
-
-    // Note: We don't decrement numSlots because that
-    // would mess up the slotIDs for all subsequent records.
-    // The slot is just "empty" now.
 
     return SPE_OK;
 }
@@ -131,13 +119,11 @@ int SP_GetRecord(char *pagePtr, int slotID, char **record, int *recLen)
 
     if (slot->offset == -1)
     {
-        // This slot was deleted
         return SPE_INVALID_SLOT;
     }
 
-    // Set the output pointers
     *recLen = slot->length;
-    *record = pagePtr + slot->offset; // Pointer *into* the page buffer
+    *record = pagePtr + slot->offset; 
 
     return SPE_OK;
 }
@@ -151,18 +137,45 @@ int SP_GetNextRecord(char *pagePtr, int *slotID, char **record, int *recLen)
     int currentSlot = *slotID;
     int nextSlot = currentSlot + 1;
 
-    // Loop from the next slot to the end, looking for a *valid* one
     while (nextSlot < header->numSlots)
     {
         if (slots[nextSlot].offset != -1)
-        { // -1 means deleted
-            // Found a valid record!
+        { 
             *slotID = nextSlot;
             return SP_GetRecord(pagePtr, nextSlot, record, recLen);
         }
         nextSlot++;
     }
 
-    // No more valid records found
-    return SPE_INVALID_SLOT; // Or a different "EOF" code
+    return SPE_INVALID_SLOT; 
+}
+
+
+/* --- High-Level Database Wrapper Functions (New) --- */
+
+int SP_ConvertTxtToTdb(const char *inputTxtFile, const char *outputTdbFile)
+{
+    // Call the internal helper function
+    return SPconvertTxtToTdb(inputTxtFile, outputTdbFile);
+}
+
+
+int SP_ScanDb(int tdb_fd)
+{
+    // Call the internal helper function
+    return SPscanDb(tdb_fd);
+}
+
+
+int SP_FindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *outSlotID)
+{
+    // Call the internal helper function
+    return SPfindRecord(tdb_fd, recordToFind, outPageNum, outSlotID);
+}
+
+
+int SP_DeleteRecordByContent(int tdb_fd, const char *recordToFind)
+{
+    // Call the internal helper function
+    return SPdeleteRecordByContent(tdb_fd, recordToFind);
 }

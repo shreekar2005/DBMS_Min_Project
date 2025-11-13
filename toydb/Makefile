@@ -1,47 +1,76 @@
+# Some make command info :
+#
+# make (or make toydb) : Builds the main 'toydb.out' executable by building all layers.
+# make run             : Builds and then runs 'toydb.out'.
+# make clean           : Removes 'toydb.out' and all build artifacts from all layers.
+# make clear           : Runs 'make clean' and then clears the terminal.
+#
+# Tests
+#
+# make testall         : Runs all tests from all layers (am, pf, and sp).
+#
+# make am_test1        : Runs 'test1' from the 'amlayer' directory.
+# make am_test2        : Runs 'test2' from the 'amlayer' directory.
+# make am_test3        : Runs 'test3' from the 'amlayer' directory.
+#
+# make pf_testpf       : Runs 'testpf' from the 'pflayer' directory.
+# make pf_testhash     : Runs 'testhash' from the 'pflayer' directory.
+# make pf_testbuf      : Runs 'testbuf' from the 'pflayer' directory.
+#
+# make sp_testsp       : Runs 'testsp' from the 'splayer' directory.
+# make sp_testconvert  : Runs 'testconvert' from the 'splayer' directory.
+# make sp_testfind     : Runs 'testfind' from the 'splayer' directory.
+# make sp_testdelete   : Runs 'testdelete' from the 'splayer' directory.
+# make sp_testscan     : Runs 'testscan' from the 'splayer' directory.
+
 CC = cc
 CFLAGS = -g
 
 AMLAYER_DIR = amlayer
+SPLAYER_DIR = splayer
 PFLAYER_DIR = pflayer
 
 AMLAYER_OBJ = $(AMLAYER_DIR)/build/amlayer.o
+SPLAYER_OBJ = $(SPLAYER_DIR)/build/splayer.o
 PFLAYER_OBJ = $(PFLAYER_DIR)/build/pflayer.o
 
 TARGET = toydb.out
 
-.PHONY: all run clear clean testall
+.PHONY: toydb run clear clean testall
 .PHONY: am_test1 am_test2 am_test3
 .PHONY: pf_testpf pf_testhash pf_testbuf
-.PHONY: sp_testsp
+.PHONY: sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan
 
-# Default rule: build the main executable
-all: $(TARGET)
+#default make
+toydb: $(TARGET)
 
-#
-# -------------------- MAIN EXECUTABLE RULES --------------------
-#
-
-# This rule links your main.c with the .o files from other layers
-$(TARGET): main.c $(AMLAYER_OBJ) $(PFLAYER_OBJ)
-	$(CC) $(CFLAGS) -o $(TARGET) $^
-
-# Rule to build the AM Layer (it depends on the PF layer)
-$(AMLAYER_OBJ): $(PFLAYER_OBJ)
-	$(MAKE) -C $(AMLAYER_DIR) all
-
-# Rule to build the PF Layer
-$(PFLAYER_OBJ):
-	$(MAKE) -C $(PFLAYER_DIR) all
-
-# 'run' now depends on 'all' to ensure the target is built
-run: all
+run: toydb
 	./$(TARGET)
 
-#
-# -------------------- TEST RULES --------------------
-#
+# build toydb.out (executable) with main.c
+$(TARGET): main.c $(AMLAYER_OBJ) $(SPLAYER_OBJ) $(PFLAYER_OBJ)
+	$(CC) $(CFLAGS) -o $(TARGET) $^
 
-testall: pf_testhash pf_testpf pf_testbuf am_test1 am_test2 am_test3 sp_testsp
+$(AMLAYER_OBJ):
+	$(MAKE) -C $(AMLAYER_DIR) amlayer
+
+$(SPLAYER_OBJ):
+	$(MAKE) -C $(SPLAYER_DIR) splayer
+
+$(PFLAYER_OBJ):
+	$(MAKE) -C $(PFLAYER_DIR) pflayer
+
+clear: clean
+	clear
+clean:
+	$(MAKE) -C pflayer clean
+	$(MAKE) -C amlayer clean
+	$(MAKE) -C splayer clean
+	rm -f $(TARGET)
+
+################################### TESTS #####################################
+
+testall: am_test1 am_test2 am_test3 pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testdelete sp_testscan
 
 am_test1:
 	$(MAKE) -C amlayer test1
@@ -59,15 +88,11 @@ pf_testbuf:
 
 sp_testsp:
 	$(MAKE) -C splayer testsp
-
-#
-# -------------------- CLEANUP RULES --------------------
-#
-
-clear: clean
-	clear
-clean:
-	$(MAKE) -C pflayer clean
-	$(MAKE) -C amlayer clean
-	$(MAKE) -C splayer clean
-	rm -f $(TARGET)
+sp_testconvert:
+	$(MAKE) -C splayer testconvert
+sp_testfind:
+	$(MAKE) -C splayer testfind
+sp_testdelete:
+	$(MAKE) -C splayer testdelete
+sp_testscan:
+	$(MAKE) -C splayer testscan

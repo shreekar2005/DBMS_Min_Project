@@ -9,6 +9,8 @@
 #ifndef SP_H
 #define SP_H
 
+#include "../../pflayer/include/pf.h" // For PF_PAGE_SIZE
+
 /**
  * @brief Each record is pointed to by a slot.
  */
@@ -35,6 +37,10 @@ typedef struct
 #define SPE_PAGE_FULL -21      /**< Page is full */
 #define SPE_INVALID_SLOT -22   /**< Invalid slot ID */
 #define SPE_RECORD_TOO_BIG -23 /**< Record is too big to fit */
+#define SPE_RECORD_NOT_FOUND -24 /**< Record not found during a search */
+#define SPE_FILE_NOT_FOUND -25 /**< Source text file not found */
+
+/* --- Low-Level Page Functions --- */
 
 /**
  * @brief Format a new, blank page as an empty slotted page.
@@ -73,7 +79,7 @@ int SP_GetRecord(char *pagePtr, int slotID, char **record, int *recLen);
  * @brief Finds the next valid slotID *after* the one given. Used for scanning.
  * @param pagePtr Pointer to the page buffer.
  * @param slotID Input: The current slot ID. Call with *slotID = -1 to start.
- *               Output: The next valid slot ID.
+ * Output: The next valid slot ID.
  * @param record Output: Pointer to the record data.
  * @param recLen Output: Length of the record.
  * @return SPE_OK on success, SPE_INVALID_SLOT if no more records.
@@ -86,5 +92,42 @@ int SP_GetNextRecord(char *pagePtr, int *slotID, char **record, int *recLen);
  * @return The amount of free space in bytes.
  */
 int SP_GetFreeSpace(char *pagePtr);
+
+
+/* --- High-Level Database Functions --- */
+
+/**
+ * @brief Creates a .tdb file from a text file.
+ * @param inputTxtFile Path to the source .txt file.
+ * @param outputTdbFile Path to the destination .tdb file to create.
+ * @return SPE_OK on success, or a PF error code on failure.
+ */
+int SP_ConvertTxtToTdb(const char *inputTxtFile, const char *outputTdbFile);
+
+/**
+ * @brief Scans an entire .tdb file and prints all records.
+ * @param tdb_fd File descriptor for the open .tdb file.
+ * @return The total number of records found, or a PF error code.
+ */
+int SP_ScanDb(int tdb_fd);
+
+/**
+ * @brief Finds the first occurrence of a record by its content.
+ * @param tdb_fd File descriptor for the open .tdb file.
+ * @param recordToFind The byte content of the record to find.
+ * @param outPageNum Output: The page number where the record was found.
+ * @param outSlotID Output: The slot ID where the record was found.
+ * @return SPE_OK if found, SPE_RECORD_NOT_FOUND if not found, or a PF error.
+ */
+int SP_FindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *outSlotID);
+
+/**
+ * @brief Finds and deletes the first occurrence of a record by its content.
+ * @param tdb_fd File descriptor for the open .tdb file.
+ * @param recordToFind The byte content of the record to delete.
+ * @return SPE_OK if found and deleted, SPE_RECORD_NOT_FOUND if not found, or an error code.
+ */
+int SP_DeleteRecordByContent(int tdb_fd, const char *recordToFind);
+
 
 #endif // SP_H

@@ -203,6 +203,8 @@ int AM_DeleteEntry(int fileDesc, char attrType, int attrLength, char *value, int
 
 	errVal = PF_UnfixPage(fileDesc, pageNum, TRUE);
 
+	AM_Check;
+	
 	/* empty the stack so that it is set for next amlayer call */
 	AM_EmptyStack();
 	AM_Errno = AME_OK;
