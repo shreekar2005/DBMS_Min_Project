@@ -86,7 +86,8 @@ extern int AM_Errno;       /* last error in AM layer */
 #define AME_INVALIDATTRTYPE -9
 #define AME_FD -10
 #define AME_INVALIDVALUE -11
-#define AME_BULKLOADFAILED -12 // Added for bulk load
+#define AME_BULKLOADFAILED -12
+#define AME_NOMEM -12
 
 /****************************************************************************
                             AM Layer Interface
