@@ -75,7 +75,7 @@ clean:
 
 ################################### TESTS #####################################
 
-testall: pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testinsert sp_testdelete sp_testscan sp_testanalyze am_test1 am_test2 am_test3 am_testcreateindex am_testcreateindexincremental am_testbulkload
+testall: clear pf_testpf pf_testhash pf_testbuf sp_testsp sp_testconvert sp_testfind sp_testinsert sp_testdelete sp_testscan sp_testanalyze am_test1 am_test2 am_test3 am_testcreateindex am_testcreateindexincremental am_testbulkload
 
 pf_testpf:
 	$(MAKE) -C pflayer testpf

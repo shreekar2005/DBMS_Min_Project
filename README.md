@@ -76,28 +76,58 @@ This is the primary way to test the functionality of each layer. These commands 
 
   * **PF Layer Tests:**
 
+      * (**Objective1**) TEST : compare LRU and MRU statargies for buffer
+      ```
+      make pf_testbuf
+      ```
       * `make pf_testpf`: Runs the main `testpf` from the `pflayer`.
       * `make pf_testhash`: Runs the `testhash` from the `pflayer`.
-      * `make pf_testbuf`: (**Objective1**) TEST : compare LRU and MRU statargies for buffer
 
   * **SP Layer Tests:**
 
+      * (**Objective2**) TEST : convert .txt file to .tdb file
+      ```
+      make sp_testconvert
+      ```
+      * (**Objective2**) TEST : find matching records in .tdb file
+      ```
+      make sp_testfind
+      ```
+      * (**Objective2**) TEST : insert records in .tdb file
+      ```
+      make sp_testinsert
+      ```
+      * make sp_testdelete(**Objective2**) TEST : delete records from .tdb file
+      ```
+      make sp_testdelete
+      ```
+      * (**Objective2**) TEST : scan all records from .tdb file
+      ```
+      make sp_testscan
+      ```
+      * (**Objective2**) TEST : give analysis of .tdb file use
+      ```
+      make sp_testanalyze
+      ```
       * `make sp_testsp`: Runs the main `testsp` from the `splayer`.
-      * `make sp_testconvert`: (**Objective2**) TEST : convert .txt file to .tdb file
-      * `make sp_testfind`: (**Objective2**) TEST : find matching records in .tdb file
-      * `make sp_testinsert`: (**Objective2**) TEST : insert records in .tdb file
-      * `make sp_testdelete`: (**Objective2**) TEST : delete records from .tdb file
-      * `make sp_testscan`: (**Objective2**) TEST : scan all records from .tdb file
-      * `make sp_testanalyze`: (**Objective2**) TEST : give analysis of .tdb file use
 
   * **AM Layer Tests:**
 
+      * (**Objective3 Task1**) TEST : create index for .tdb file in sigle function call
+      ```
+      make am_testcreateindex
+      ```
+      * (**Objective3 Task2**) TEST : insert entry in .tdb 1 by 1 and also insert index for that entry in index file.
+      ```
+      make am_testcreateindexincremental
+      ```
+      * (**Objective3 Task3**) TEST : insert indices in bulk for sorted keys
+      ```
+      make am_testbulkload
+      ```
       * `make am_test1`: Runs `test1` from the `amlayer`.
       * `make am_test2`: Runs `test2` from the `amlayer`.
       * `make am_test3`: Runs `test3` from the `amlayer`.
-      * `make am_testcreateindex`: (**Objective3 Task1**) TEST : create index for .tdb file in sigle function call
-      * `make am_testcreateindexincremental`: (**Objective3 Task2**) TEST : insert entry in .tdb 1 by 1 and also insert index for that entry in index file.
-      * `make am_testbulkload`: (**Objective3 Task3**) TEST : insert indices in bulk for sorted keys
 
 -----
 
