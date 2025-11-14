@@ -17,7 +17,9 @@ The details of the project problem are in `Assignment.pdf`.
   * `README.md`: This file.
   * `Assignment.pdf`: The project assignment details.
   * `data/`: Contains sample `.txt` data files used to populate the database.
-  * `Reports/`: Contains project reports (e.g., `Report_Objective1.pdf`).
+  * `Reports/`: Contains project reports : 
+    1. `Report_Objective1.pdf` where we talk about LRU MRU in buffer (implementation and comparision)
+    2. `About Slotted Paged file.pdf` where we discussed about how we planned structure of slotted paged file.
   * `toydb/`: The complete ToyDB source code.
 
 ## toydb Directory Structure
