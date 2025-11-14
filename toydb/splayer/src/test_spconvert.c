@@ -10,15 +10,8 @@
 #include "../include/sp.h"
 #include "../../pflayer/include/pfbuf.h" // For STRATEGY defines
 
-/**
- * Replaces the extension of a filename with ".tdb" using standard library functions.
- *
- * @param input     The source filename string (e.g., "testinput.txt").
- * @param output    The buffer to write the result to (e.g., "testinput.tdb").
- * @param max_len   The total size of the output buffer.
- * @return          0 on success, -1 if the output buffer is too small.
- */
-int replace_ext_to_tdb_stdlib(const char* input, char* output, int max_len) {
+
+static int replace_ext_to_tdb_stdlib(const char* input, char* output, int max_len) {
     const char* last_dot = strrchr(input, '.');
     int base_len;
     if (last_dot != NULL && last_dot != input) {
@@ -39,11 +32,8 @@ int replace_ext_to_tdb_stdlib(const char* input, char* output, int max_len) {
     return 0;
 }
 
-/**
- * @brief Prints usage instructions and exits.
- * @param progName The name of the program (argv[0]).
- */
-void print_usage(const char *progName)
+
+static void print_usage(const char *progName)
 {
     fprintf(stderr, "Usage: %s <file.txt> <num_buffers> <strategy>\n", progName);
     fprintf(stderr, "  <strategy>: 0 for LRU, 1 for MRU\n");
@@ -86,7 +76,6 @@ int main(int argc, char *argv[])
 
     PF_Init(numBuffers, strategy);
 
-    // Call the library function to do the work
     int err = SP_ConvertTxtToTdb(inputTxtFile, outputTdbFile);
     if (err != SPE_OK) {
         fprintf(stderr, "Error: Conversion failed.\n");

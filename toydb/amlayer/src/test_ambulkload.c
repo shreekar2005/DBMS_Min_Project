@@ -1,6 +1,6 @@
 /**
  * @file test_ambulkload.c
- * @brief Test Case 3: Build index using efficient bulk-loading.
+ * @brief OBJECTIVE 3: TASK 3 : Build index using efficient bulk-loading.
  */
 
 #include <stdio.h>
@@ -21,10 +21,9 @@ int main()
     int rootPageNum;
     char *pageBuf;
 
-    // Initialize layers
     PF_Init(20,0); // 20 buffers, LRU strategy
 
-    printf("--- Test Case 3: Bulk-Load Index from Sorted File ---\n");
+    printf("TASK : Bulk-Load Index from Sorted File\n");
     printf("Using Sorted Data File: %s\n", DATA_FILE);
     printf("Creating Index File: %s\n\n", INDEX_FILE_NAME);
 
@@ -43,7 +42,7 @@ int main()
         exit(1);
     }
 
-    // Open the existing sorted data file (it's a PF file)
+    // Open the existing sorted data file
     sp_fd = PF_OpenFile((char *)DATA_FILE);
     if (sp_fd < 0)
     {
@@ -67,16 +66,18 @@ int main()
     PF_CloseFile(sp_fd);
     PF_CloseFile(am_fd);
 
+    // return 0;
+
+
+
     // Print the index to verify
-    printf("--- Printing Index Structure (from %s) ---\n", INDEX_FILE_NAME);
+    printf("Printing Index Structure (from %s)\n", INDEX_FILE_NAME);
     am_fd = PF_OpenFile((char *)INDEX_FILE_NAME);
     if (am_fd < 0)
     {
         PF_PrintError("Error opening index file for printing");
         exit(1);
     }
-
-    // Get the root page number
     if (PF_GetFirstPage(am_fd, &rootPageNum, &pageBuf) != PFE_OK)
     {
         PF_PrintError("Error getting root page");
@@ -87,7 +88,6 @@ int main()
 
     AM_PrintTree(am_fd, rootPageNum, ATTR_TYPE);
     PF_CloseFile(am_fd);
-    printf("--- Test Case 3 Complete ---\n");
-
+    printf("Bulk-Load Index from Sorted File : Verification Complete\n");
     return 0;
 }

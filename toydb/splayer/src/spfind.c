@@ -26,8 +26,6 @@ int SPfindRecord(int tdb_fd, const char *recordToFind, int *outPageNum, int *out
                 *outPageNum = currentPageNum;
                 *outSlotID = currentSlot;
                 *outPagePtrPtr = pagePtr; 
-                
-                // PF_UnfixPage(tdb_fd, currentPageNum, FALSE);
                 return SPE_OK;
             }
         }

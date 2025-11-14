@@ -19,12 +19,10 @@ int main(void)
     char *record;
     int recLen;
 
-    printf("--- Slotted Page Test Program ---\n");
+    printf("TEST : Testing Slotted Page Programs\n");
 
-    // 1. Initialize the PF Layer
     PF_Init(20, 0);
 
-    // 2. Create a test file
     printf("Creating test file 'test_sp_file.tdb'...\n");
     err = PF_CreateFile("test_sp_file.tdb");
     if (err != PFE_OK)
@@ -33,7 +31,6 @@ int main(void)
         return 1;
     }
 
-    // 3. Open the test file
     fd = PF_OpenFile("test_sp_file.tdb");
     if (fd < 0)
     {
@@ -42,7 +39,6 @@ int main(void)
     }
     printf("Test file opened (fd: %d).\n", fd);
 
-    // 4. Allocate a new page
     err = PF_AllocPage(fd, &pageNum, &pagePtr);
     if (err != PFE_OK)
     {
@@ -51,13 +47,12 @@ int main(void)
     }
     printf("Allocated new page (Page #%d).\n", pageNum);
 
-    // 5. Initialize it as a slotted page
     SP_InitPage(pagePtr);
     printf("Page initialized as slotted page.\n");
     printf("Initial free space: %d bytes\n", SP_GetFreeSpace(pagePtr));
     printf("------------------------------------\n");
 
-    // 6. Test Insertion
+    // Test Insertion
     printf("Testing record insertion...\n");
 
     char *s1 = "00001001;abhas@aero.iitb.ac.in;;";  // Length 23
@@ -74,7 +69,7 @@ int main(void)
     printf("Inserted '%s' into Slot %d. Free space: %d\n", s3, slot3, SP_GetFreeSpace(pagePtr));
     printf("------------------------------------\n");
 
-    // 7. Test Scanning (Full Page)
+    // Test Scanning (Full Page)
     printf("Scanning all valid records on page (before deletion):\n");
     slotID = -1; // Start scan from the beginning
     while (SP_GetNextRecord(pagePtr, &slotID, &record, &recLen) == SPE_OK)
@@ -84,7 +79,7 @@ int main(void)
     printf("--- End of scan ---\n");
     printf("------------------------------------\n");
 
-    // 8. TEST DELETION
+    // TEST DELETION
     printf("Testing deletion...\n");
     printf("Deleting record from Slot %d ('%s')...\n", slot1, s1);
     err = SP_DeleteRecord(pagePtr, slot1);
@@ -98,7 +93,7 @@ int main(void)
     }
     printf("------------------------------------\n");
 
-    // 9. TEST SCANNING (AFTER DELETION)
+    // TEST SCANNING (AFTER DELETION)
     printf("Scanning all valid records (after deleting Slot %d):\n", slot1);
     slotID = -1; // Restart scan
     while (SP_GetNextRecord(pagePtr, &slotID, &record, &recLen) == SPE_OK)
@@ -109,7 +104,7 @@ int main(void)
     printf("--- End of scan (Slot %d should be missing) ---\n", slot1);
     printf("------------------------------------\n");
 
-    // 10. TEST GET SPECIFIC RECORD (PROVES DELETION)
+    // TEST GET SPECIFIC RECORD (PROVES DELETION)
     printf("Fetching record from Slot %d directly...\n", slot2);
     if (SP_GetRecord(pagePtr, slot2, &record, &recLen) == SPE_OK)
     {
@@ -131,7 +126,7 @@ int main(void)
     }
     printf("------------------------------------\n");
 
-    // 11. Test Page Full
+    // Test Page Full
     printf("Testing page-full condition...\n");
     char *tinyRec = "a";
     int tinyLen = 1;
@@ -144,7 +139,6 @@ int main(void)
     printf("Final free space: %d bytes\n", SP_GetFreeSpace(pagePtr));
     printf("------------------------------------\n");
 
-    // 12. Unfix the page (mark it "dirty" since we changed it)
     printf("Unfixing page %d (marked as dirty)...\n", pageNum);
     err = PF_UnfixPage(fd, pageNum, TRUE);
     if (err != PFE_OK)
@@ -153,7 +147,6 @@ int main(void)
         return 1;
     }
 
-    // 13. Clean up
     printf("Closing and destroying test file...\n");
 
     err = PF_CloseFile(fd);

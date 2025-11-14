@@ -92,7 +92,7 @@ int SPconvertTxtToTdb(const char *inputTxtFile, const char *outputTdbFile)
     err = PF_CloseFile(tdb_fd);
     if (err != PFE_OK) {
         PF_PrintError("SPconvertTxtToTdb: PF_CloseFile");
-        fclose(txtFile); // Still close the text file
+        fclose(txtFile);
         return err;
     }
 

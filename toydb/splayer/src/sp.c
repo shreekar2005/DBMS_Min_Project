@@ -12,7 +12,6 @@
 #include "../../pflayer/include/pf.h" 
 #include "../include/sp.h" 
 
-// Include all internal helper headers
 #include "../include/spconvert.h"
 #include "../include/spscan.h"
 #include "../include/spfind.h"
@@ -21,7 +20,6 @@
 #include "../include/spinsert.h"
 
 
-/* Static function prototypes */
 static PageHeader *getHeader(char *pagePtr);
 static Slot *getSlots(char *pagePtr);
 
@@ -153,25 +151,20 @@ int SP_GetNextRecord(char *pagePtr, int *slotID, char **record, int *recLen)
 }
 
 
-/* --- High-Level Database Wrapper Functions --- */
-
 int SP_ConvertTxtToTdb(const char *inputTxtFile, const char *outputTdbFile)
 {
-    // Call the internal helper function
     return SPconvertTxtToTdb(inputTxtFile, outputTdbFile);
 }
 
 
 int SP_ScanDb(int tdb_fd)
 {
-    // Call the internal helper function
     return SPscanDb(tdb_fd);
 }
 
 
 int SP_FindRecord(int tdb_fd, const char *recordToFind, int *outPageNumPtr, int *outSlotID, char** outPagePtrPtr)
 {
-    // Call the internal helper function
     int status;
     status = SPfindRecord(tdb_fd, recordToFind, outPageNumPtr, outSlotID, outPagePtrPtr); 
     if(status==SPE_OK) PF_UnfixPage(tdb_fd, *outPageNumPtr, FALSE); 
@@ -181,18 +174,15 @@ int SP_FindRecord(int tdb_fd, const char *recordToFind, int *outPageNumPtr, int 
 
 int SP_DeleteRecordByContent(int tdb_fd, const char *recordToFind)
 {
-    // Call the internal helper function
     return SPdeleteRecordByContent(tdb_fd, recordToFind);
 }
 
 int SP_InsertRecordByContent(int tdb_fd, const char *record, int recLen)
 {
-    // Call the internal helper function from spinsert.c
     return SPinsertRecordByContent(tdb_fd, record, recLen);
 }
 
 int SP_AnalyzeDb(int tdb_fd)
 {
-    // Call the internal helper function
     return SPanalyzeDb(tdb_fd);
 }

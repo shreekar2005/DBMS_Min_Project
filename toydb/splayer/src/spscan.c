@@ -25,7 +25,7 @@ int SPscanDb(int tdb_fd)
             recordsFound++;
         }
 
-        err = PF_UnfixPage(tdb_fd, currentPageNum, FALSE); // Not dirty
+        err = PF_UnfixPage(tdb_fd, currentPageNum, FALSE);
         if (err != PFE_OK) {
             PF_PrintError("SPscanDb: PF_UnfixPage");
             return err;

@@ -4,8 +4,8 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h> // For malloc/free
-#include <string.h> // For memset
+#include <stdlib.h>
+#include <string.h>
 #include "pf.h"
 #include "sp.h"
 #include "am.h"
@@ -23,17 +23,13 @@ typedef struct ParentEntry
     int pageNum;
 } ParentEntry;
 
-/* --- Forward Declarations for Helper Functions --- */
-
 static void InitLeafHeader(char *pageBuf, short attrLength, short maxKeys);
 static int PackLeafPage(char *pageBuf, AM_LEAFHEADER *header, char *key, int recId, short attrLength);
 static void InitInternalHeader(char *pageBuf, short attrLength, short maxKeys);
 static int PackInternalPage(char *pageBuf, AM_INTHEADER *header, char *key, int pageNum, short attrLength);
 static int BuildInternalLevel(int amFileDesc, ParentEntry *levelEntries, int numEntries, short attrLength, short maxKeys, int leftmostChildPage, int *newRootPageNum);
 
-/**
- * @brief Efficiently builds an index from a pre-sorted data file.
- */
+
 int AM_BulkLoad(int amFileDesc, int spFileDesc,
                 char attrType, int attrLength)
 {
@@ -52,67 +48,53 @@ int AM_BulkLoad(int amFileDesc, int spFileDesc,
     int maxParentEntries = 1024; // Initial size
     int numParentEntries = 0;
     
-    printf("******************************************************************\n");
-    printf("* AM_BulkLoad: Starting efficient bottom-up B+ Tree construction.\n");
-    printf("******************************************************************\n");
+    printf("AM_BulkLoad: Starting efficient bottom-up B+ Tree construction.\n");
 
-    // --- 1. Prepare Parent Entry Array and Get maxKeys ---
     parentEntries = (ParentEntry *)malloc(sizeof(ParentEntry) * maxParentEntries);
     if (parentEntries == NULL) return AME_NOMEM;
 
-    // Get the root page (page 0) created by AM_CreateIndex to read maxKeys
     if (PF_GetThisPage(amFileDesc, 0, &am_pageBuf) != PFE_OK) {
         PF_PrintError("AM_BulkLoad: Could not get page 0");
         free(parentEntries);
         return AME_PF;
     }
     AM_bcopy(am_pageBuf, (char *)&leafHeader, AM_sl);
-    maxKeys = leafHeader.maxKeys; // Get max internal keys
+    maxKeys = leafHeader.maxKeys;
     
-    // **FIX**: Unfix page 0. We will *not* use it as the first leaf.
     if (PF_UnfixPage(amFileDesc, 0, FALSE) != PFE_OK) {
         PF_PrintError("AM_BulkLoad: Could not unfix page 0");
         free(parentEntries);
         return AME_PF;
     }
 
-    // **FIX**: Allocate a *new* page (Page 1) to be the *first* leaf.
     if (PF_AllocPage(amFileDesc, &am_pageNum, &am_pageBuf) != PFE_OK) {
         PF_PrintError("AM_BulkLoad: Error allocating first leaf page");
         free(parentEntries);
         return AME_PF;
     }
     
-    AM_LeftPageNum = am_pageNum; // Set global: the first leaf is Page 1
+    AM_LeftPageNum = am_pageNum;
     InitLeafHeader(am_pageBuf, (short)attrLength, maxKeys);
-    AM_bcopy(am_pageBuf, (char *)&leafHeader, AM_sl); // Read the header we just wrote
+    AM_bcopy(am_pageBuf, (char *)&leafHeader, AM_sl);
 
 
-    // --- 2. Scan splayer file and build all leaf pages ---
+    // Scan splayer file and build all leaf pages
 
-    // Get the first page of the splayer file
     pf_err = PF_GetFirstPage(spFileDesc, &sp_pageNum, &sp_pageBuf);
     if (pf_err != PFE_OK && pf_err != PFE_EOF) {
         PF_PrintError("AM_BulkLoad: Error getting first data page");
         free(parentEntries);
         return AME_PF;
     }
-
-    // Iterate through all pages in the splayer file
     while (pf_err == PFE_OK) {
         int slotID = -1;
         char *record;
         int recLen;
-
-        // Iterate through all records on this page
         while (SP_GetNextRecord(sp_pageBuf, &slotID, &record, &recLen) == SPE_OK) {
-            char *key = record; // Assuming key is at start of record
+            char *key = record;
             int recId = (sp_pageNum << 16) | (slotID & 0xFFFF);
-
-            // Try to pack the (key, recId) into the current leaf page
             if (PackLeafPage(am_pageBuf, &leafHeader, key, recId, (short)attrLength) == PAGE_FULL)
             {
-                // Page is full. Finalize and Unfix it.
                 leafHeader.nextLeafPage = AM_NULL_PAGE;
                 AM_bcopy((char *)&leafHeader, am_pageBuf, AM_sl);
                 if (PF_UnfixPage(amFileDesc, am_pageNum, TRUE) != PFE_OK) {
@@ -122,8 +104,6 @@ int AM_BulkLoad(int amFileDesc, int spFileDesc,
                 }
                 
                 prevLeafPageNum = am_pageNum;
-
-                // Allocate a *new* leaf page
                 if (PF_AllocPage(amFileDesc, &am_pageNum, &am_pageBuf) != PFE_OK) {
                     PF_PrintError("AM_BulkLoad: Error allocating new leaf");
                     free(parentEntries);
@@ -131,8 +111,6 @@ int AM_BulkLoad(int amFileDesc, int spFileDesc,
                 }
                 InitLeafHeader(am_pageBuf, (short)attrLength, maxKeys);
                 AM_bcopy(am_pageBuf, (char *)&leafHeader, AM_sl);
-
-                // Link the *previous* leaf page to this *new* one
                 char *prevPageBuf;
                 AM_LEAFHEADER prevHeader;
                 if (PF_GetThisPage(amFileDesc, prevLeafPageNum, &prevPageBuf) != PFE_OK) {
@@ -141,15 +119,13 @@ int AM_BulkLoad(int amFileDesc, int spFileDesc,
                     return AME_PF;
                 }
                 AM_bcopy(prevPageBuf, (char *)&prevHeader, AM_sl);
-                prevHeader.nextLeafPage = am_pageNum; // Link it
+                prevHeader.nextLeafPage = am_pageNum;
                 AM_bcopy((char *)&prevHeader, prevPageBuf, AM_sl);
                 if (PF_UnfixPage(amFileDesc, prevLeafPageNum, TRUE) != PFE_OK) {
                     PF_PrintError("AM_BulkLoad: Error unfixing prev leaf after link");
                     free(parentEntries);
                     return AME_PF;
                 }
-
-                // Add the *new* key to the parent entry list
                 if (numParentEntries >= maxParentEntries) {
                     maxParentEntries *= 2;
                     parentEntries = (ParentEntry *)realloc(parentEntries, sizeof(ParentEntry) * maxParentEntries);
@@ -158,31 +134,23 @@ int AM_BulkLoad(int amFileDesc, int spFileDesc,
                 AM_bcopy(key, parentEntries[numParentEntries].key, attrLength);
                 parentEntries[numParentEntries].pageNum = am_pageNum;
                 numParentEntries++;
-                
-                // Pack the current (key, recId) into the new page
                 PackLeafPage(am_pageBuf, &leafHeader, key, recId, (short)attrLength);
             }
-        } // end loop: records on page
-        
-        // Unfix the current splayer page
+        }
         pf_err = PF_UnfixPage(spFileDesc, sp_pageNum, FALSE);
         if (pf_err != PFE_OK) {
              PF_PrintError("AM_BulkLoad: Error unfixing data page");
              free(parentEntries);
              return AME_PF;
         }
-
-        // Get the next splayer page
         pf_err = PF_GetNextPage(spFileDesc, &sp_pageNum, &sp_pageBuf);
-    } // end loop: pages in file
+    }
     
     if (pf_err != PFE_EOF) {
         PF_PrintError("AM_BulkLoad: Error getting next data page");
         free(parentEntries);
         return AME_PF;
     }
-
-    // Finalize and Unfix the very last leaf page
     leafHeader.nextLeafPage = AM_NULL_PAGE;
     AM_bcopy((char *)&leafHeader, am_pageBuf, AM_sl);
     if (PF_UnfixPage(amFileDesc, am_pageNum, TRUE) != PFE_OK) {
@@ -193,29 +161,22 @@ int AM_BulkLoad(int amFileDesc, int spFileDesc,
 
     printf("... Leaf level (Level 0) complete. %d parent entries created.\n", numParentEntries);
 
-    // --- 3. Build Internal Levels ---
+    // Build Internal Levels
     
     int newRootPageNum = -1;
     if (numParentEntries == 0) {
-        // The entire tree fits in *one leaf* (which is NOT page 0)
-        // We must move this single leaf page to page 0
         char *leafBuf;
         char *page0Buf;
-        
-        // Get the single leaf page (e.g., Page 1)
         if (PF_GetThisPage(amFileDesc, AM_LeftPageNum, &leafBuf) != PFE_OK) { 
             PF_PrintError("AM_BulkLoad: Error getting single leaf");
             free(parentEntries); 
             return AME_PF; 
         }
-        // Get page 0 (the original empty leaf)
         if (PF_GetThisPage(amFileDesc, 0, &page0Buf) != PFE_OK) { 
             PF_PrintError("AM_BulkLoad: Error getting page 0");
             free(parentEntries); 
             return AME_PF; 
         }
-
-        // Copy leaf (Page 1) *to* page 0
         AM_bcopy(leafBuf, page0Buf, PF_PAGE_SIZE);
 
         if (PF_UnfixPage(amFileDesc, 0, TRUE) != PFE_OK) { free(parentEntries); return AME_PF; }
@@ -241,14 +202,12 @@ int AM_BulkLoad(int amFileDesc, int spFileDesc,
              return AME_INTERROR;
         }
         
-        AM_RootPageNum = 0; // The official root is now page 0
+        AM_RootPageNum = 0;
         printf("... Internal levels built. New root is at page 0.\n");
     }
 
     free(parentEntries);
-    printf("******************************************************************\n");
-    printf("* AM_BulkLoad: B+ Tree construction complete.\n");
-    printf("******************************************************************\n");
+    printf("AM_BulkLoad: B+ Tree construction complete.\n");
     return AME_OK;
 }
 
@@ -354,8 +313,6 @@ static int BuildInternalLevel(int amFileDesc, ParentEntry *levelEntries, int num
 
     parentEntries = (ParentEntry *)malloc(sizeof(ParentEntry) * maxParentEntries);
     if (parentEntries == NULL) return AME_NOMEM;
-
-    // --- 1. Allocate and initialize the first page of this level ---
     if (PF_AllocPage(amFileDesc, &currPageNum, &currPageBuf) != PFE_OK) {
         free(parentEntries);
         return AME_PF;
@@ -363,34 +320,24 @@ static int BuildInternalLevel(int amFileDesc, ParentEntry *levelEntries, int num
     firstPageOfLevel = currPageNum;
     InitInternalHeader(currPageBuf, attrLength, maxKeys);
     AM_bcopy(currPageBuf, (char *)&header, AM_sint);
-    
-    // Set the first pointer of this new page to the leftmost child
     int currentChildPtr = leftmostChildPage; 
     AM_bcopy((char *)&currentChildPtr, currPageBuf + AM_sint, AM_si);
-    
 
-    // --- 2. Iterate through entries and pack pages ---
     for (int i = 0; i < numEntries; i++)
     {
         if (PackInternalPage(currPageBuf, &header, levelEntries[i].key, levelEntries[i].pageNum, attrLength) == PAGE_FULL)
         {
-            // Page is full. (levelEntries[i] was *not* packed).
-            // 1. Finalize and Unfix it.
             AM_bcopy((char *)&header, currPageBuf, AM_sint);
             if (PF_UnfixPage(amFileDesc, currPageNum, TRUE) != PFE_OK) {
                 free(parentEntries);
                 return AME_PF;
             }
-
-            // 2. Allocate a new internal page
             if (PF_AllocPage(amFileDesc, &currPageNum, &currPageBuf) != PFE_OK) {
                 free(parentEntries);
                 return AME_PF;
             }
             InitInternalHeader(currPageBuf, attrLength, maxKeys);
             AM_bcopy(currPageBuf, (char *)&header, AM_sint);
-
-            // 3. Promote the key that didn't fit. It points to the *new page*
             if (numParentEntries >= maxParentEntries) {
                 maxParentEntries *= 2;
                 parentEntries = (ParentEntry *)realloc(parentEntries, sizeof(ParentEntry) * maxParentEntries);
@@ -399,52 +346,34 @@ static int BuildInternalLevel(int amFileDesc, ParentEntry *levelEntries, int num
             AM_bcopy(levelEntries[i].key, parentEntries[numParentEntries].key, attrLength);
             parentEntries[numParentEntries].pageNum = currPageNum;
             numParentEntries++;
-            
-            // 4. The *first pointer* of this *new page* is the pointer
-            // from the entry we just promoted.
             currentChildPtr = levelEntries[i].pageNum;
             AM_bcopy((char *)&currentChildPtr, currPageBuf + AM_sint, AM_si);
-            
-            // 5. This entry (levelEntries[i]) *still* needs to be packed
-            // onto the new page.
             if (PackInternalPage(currPageBuf, &header, levelEntries[i].key, levelEntries[i].pageNum, attrLength) != PAGE_OK) {
                 printf("AM_BulkLoad: FATAL: Pack failed on new internal page\n");
                 free(parentEntries);
                 return AME_INTERROR;
             }
         }
-    } // end for loop
-
-    // --- 3. Finalize the last page for this level ---
+    }
     AM_bcopy((char *)&header, currPageBuf, AM_sint);
     if (PF_UnfixPage(amFileDesc, currPageNum, TRUE) != PFE_OK) {
         free(parentEntries);
         return AME_PF;
     }
-
-    // --- 4. Recurse or Finish ---
     
     if (numParentEntries == 0) {
-        // All entries fit on one page. This (firstPageOfLevel) is the root.
-        // We must move this new root to page 0.
-        
         char *newRootBuf;
         char *page0Buf;
-
-        // Get the new root (e.g., page 32)
         if (PF_GetThisPage(amFileDesc, firstPageOfLevel, &newRootBuf) != PFE_OK) { 
             PF_PrintError("BuildInternalLevel: Error getting new root");
             free(parentEntries); 
             return AME_PF; 
         }
-        // Get page 0 (the original empty leaf)
         if (PF_GetThisPage(amFileDesc, 0, &page0Buf) != PFE_OK) { 
             PF_PrintError("BuildInternalLevel: Error getting page 0");
             free(parentEntries); 
             return AME_PF; 
         }
-
-        // Copy new root (e.g., 32) *to* page 0
         AM_bcopy(newRootBuf, page0Buf, PF_PAGE_SIZE);
 
         if (PF_UnfixPage(amFileDesc, 0, TRUE) != PFE_OK) { free(parentEntries); return AME_PF; }
@@ -452,7 +381,7 @@ static int BuildInternalLevel(int amFileDesc, ParentEntry *levelEntries, int num
         
         if (PF_DisposePage(amFileDesc, firstPageOfLevel) != PFE_OK) { free(parentEntries); return AME_PF; }
 
-        *rootPageNum = 0; // The new root IS page 0
+        *rootPageNum = 0;
 
     } else {
         // We have a new, smaller list of parent entries.
@@ -464,8 +393,7 @@ static int BuildInternalLevel(int amFileDesc, ParentEntry *levelEntries, int num
             free(parentEntries);
             return AME_PF;
         }
-        // The recursive call will have already moved the *final* root to page 0.
-        *rootPageNum = newRootPageNumFromRecurse; // This should be 0
+        *rootPageNum = newRootPageNumFromRecurse;
     }
 
     free(parentEntries);

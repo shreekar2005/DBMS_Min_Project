@@ -89,11 +89,9 @@ extern int AM_Errno;       /* last error in AM layer */
 #define AME_BULKLOADFAILED -12
 #define AME_NOMEM -12
 
-/****************************************************************************
-                            AM Layer Interface
-****************************************************************************/
 
 /* am.c */
+
 /**
  * @brief Splits a leaf node.
  * @param fileDesc File descriptor.
@@ -161,6 +159,7 @@ void AM_SplitIntNode(char *pageBuf, char *pbuf1, char *pbuf2, AM_INTHEADER *head
 void AM_bcopy(char *s1, char *s2, int nbytes);
 
 /* amfns.c */
+
 /**
  * @brief Creates a secondary index file called fileName.indexNo.
  * @param fileName Name of indexed file.
@@ -208,6 +207,7 @@ int AM_InsertEntry(int fileDesc, char attrType, int attrLength, char *value, int
 void AM_PrintError(const char *s);
 
 /* aminsert.c */
+
 /**
  * @brief Inserts a key into a leaf node.
  * @param pageBuf Buffer where the leaf page resides.
@@ -250,6 +250,7 @@ void AM_InsertToLeafNotFound(char *pageBuf, char *value, int recId, int index, A
 void AM_Compact(int low, int high, char *pageBuf, char *tempPage, AM_LEAFHEADER *header);
 
 /* amprint.c */
+
 /**
  * @brief Prints the contents of an internal node.
  * @param pageBuf Buffer containing the internal node page.
@@ -297,6 +298,7 @@ void AM_PrintAttr(char *bufPtr, char attrType, int attrLength);
 void AM_PrintTree(int fileDesc, int pageNum, char attrType);
 
 /* amscan.c */
+
 /**
  * @brief Opens an index scan.
  * @param fileDesc File Descriptor.
@@ -330,6 +332,7 @@ int AM_CloseIndexScan(int scanDesc);
 int GetLeftPageNum(int fileDesc);
 
 /* amsearch.c */
+
 /**
  * @brief Searches for a key in a B+ tree.
  *
@@ -382,6 +385,7 @@ int AM_SearchLeaf(char *pageBuf, char attrType, int attrLength, char *value, int
 int AM_Compare(char *bufPtr, char attrType, int attrLength, char *valPtr);
 
 /* amstack.c */
+
 /**
  * @brief Pushes a page number and offset onto the stack.
  * @param pageNum The page number to push.
@@ -407,6 +411,7 @@ void AM_topofStack(int *pageNum, int *offset);
 void AM_EmptyStack(void);
 
 /* am_bulkload.c */
+
 /**
  * @brief Efficiently builds an index from a pre-sorted data file.
  * @param amFileDesc File descriptor for the index.
@@ -419,6 +424,7 @@ int AM_BulkLoad(int amFileDesc, int spFileDesc, char attrType, int attrLength);
 
 
 /* misc.c */
+
 /**
  * @brief Pads the end of a string with '\\0' up to a given length.
  * @param str The string to pad.

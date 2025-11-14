@@ -56,11 +56,4 @@ typedef struct smallrec
 /* successor function, assuming ch is a character */
 #define succ(ch) ((char)((int)(ch) + 1))
 
-/**
- * @brief Finds the next entry in a scan.
- * @param sd The scan descriptor.
- * @return The record ID of the next entry, or a negative value if no more entries.
- */
-extern RecIdType xAM_FindNextEntry(int sd);
-
 #endif /* TESTAM_H */

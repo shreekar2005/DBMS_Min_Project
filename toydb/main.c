@@ -1,3 +1,5 @@
+// THIS IS DUMMY MAIN.C, actually currently just tests are working but we have to write this main.c to create database which will work like real database (like taking query, processing that and all...)
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

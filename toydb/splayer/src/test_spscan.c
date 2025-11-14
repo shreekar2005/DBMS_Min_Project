@@ -7,9 +7,9 @@
 #include <stdlib.h>
 #include "../../pflayer/include/pf.h"
 #include "../include/sp.h"
-#include "../../pflayer/include/pfbuf.h" // For STRATEGY defines
+#include "../../pflayer/include/pfbuf.h"
 
-void print_usage(const char *progName) {
+static void print_usage(const char *progName) {
     fprintf(stderr, "Usage: %s <file.tdb> <num_buffers> <strategy>\n", progName);
     fprintf(stderr, "  <strategy>: 0 for LRU, 1 for MRU\n");
 }
@@ -39,7 +39,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    // Call the library function
     int recordsFound = SP_ScanDb(tdb_fd);
     if (recordsFound < 0) {
         fprintf(stderr, "Error: Scan failed.\n");

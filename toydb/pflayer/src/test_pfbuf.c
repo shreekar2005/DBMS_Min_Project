@@ -63,7 +63,7 @@ void createFile(void)
     char *buf;
     int pagenum;
 
-    printf("--- Creating Test File ---\n");
+    printf("Creating Test File\n");
     if ((error = PF_CreateFile(TEST_FILE)) != PFE_OK)
     {
         PF_PrintError("PF_CreateFile");
@@ -124,24 +124,22 @@ void runTest(void)
     {
         if ((rand() % 100) < HOT_ACCESS_PERCENTAGE)
         {
-            // --- 80% HOT ACCESS ---
+            // 80% HOT ACCESS
             // Access a random page from the hot set
             pagenum = rand() % HOT_SET_SIZE;
         }
         else
         {
-            // --- 20% COLD ACCESS ---
+            // 20% COLD ACCESS
             // Access the next page in the sequential scan
             pagenum = HOT_SET_SIZE + cold_scan_tracker;
 
             cold_scan_tracker++;
             if (cold_scan_tracker >= COLD_SCAN_SIZE)
             {
-                cold_scan_tracker = 0; // Wrap around
+                cold_scan_tracker = 0;
             }
         }
-
-        // Now, get the page (this is the Logical Read)
         if ((error = PF_GetThisPage(fd, pagenum, &buf)) != PFE_OK)
         {
             PF_PrintError("PF_GetThisPage");
@@ -149,13 +147,13 @@ void runTest(void)
             exit(1);
         }
 
-        // Verify the page content (optional)
+        // Verify the page content
         if (*((int *)buf) != pagenum)
         {
             printf("Data corruption on page %d!\n", pagenum);
         }
 
-        // Unfix the page (not dirty)
+        // Unfix the page
         if ((error = PF_UnfixPage(fd, pagenum, FALSE)) != PFE_OK)
         {
             PF_PrintError("PF_UnfixPage");

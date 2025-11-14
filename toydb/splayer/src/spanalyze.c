@@ -27,13 +27,12 @@ static void print_table_row(const char* method, long dataBytes, long totalBytes,
  * @brief Internal helper to scan and analyze a .tdb file.
  */
 int SPanalyzeDb(int tdb_fd) {
-    // --- 3. Scan and Collect Statistics ---
     int currentPageNum = -1;
     char *pagePtr;
     int err;
 
     long total_records = 0;
-    long total_data_bytes = 0; // Just the size of the records
+    long total_data_bytes = 0;
     long total_pages_used = 0;
     long total_slot_bytes = 0;
     long total_header_bytes = 0;
@@ -57,10 +56,9 @@ int SPanalyzeDb(int tdb_fd) {
 
     if (err != PFE_EOF) {
         PF_PrintError("Error during scan");
-        return err; // Return the PF error
+        return err; 
     }
 
-    // --- 4. Calculate and Print Report ---
     printf("\n--- Slotted Page Statistics ---\n");
     printf("Total Records Found:   %ld\n", total_records);
     printf("Total Pages Used:      %ld\n", total_pages_used);
@@ -73,20 +71,17 @@ int SPanalyzeDb(int tdb_fd) {
     printf("| Method               | Total Bytes  | Total Pages | Utilization   |\n");
     printf("|----------------------|--------------|-------------|---------------|\n");
     
-    // 1. Slotted Page (Our method)
     print_table_row("Slotted Pages", total_data_bytes, slotted_total_bytes, total_pages_used);
 
-    // 2. Static Management (Comparison)
-    int static_lengths[] = {50, 100, 250}; // Compare against these static lengths
+    int static_lengths[] = {50, 100, 250};
     int i;
     for (i = 0; i < sizeof(static_lengths)/sizeof(int); i++) {
         int static_len = static_lengths[i];
         if (static_len == 0) continue;
         
         int records_per_page = PF_PAGE_SIZE / static_len;
-        if (records_per_page == 0) continue; // Record too big
+        if (records_per_page == 0) continue;
         
-        // Calculate pages needed (use ceiling division)
         long static_pages = (total_records + records_per_page - 1) / records_per_page;
         long static_total_bytes = static_pages * PF_PAGE_SIZE;
         

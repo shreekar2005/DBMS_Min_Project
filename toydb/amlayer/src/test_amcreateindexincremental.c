@@ -1,6 +1,6 @@
 /**
  * @file test_amcreateindexincremental.c
- * @brief Test Case 2: Build index incrementally from empty files.
+ * @brief OBJECTIVE 3 : TASK 2 : Build index incrementally from empty files.
  */
 
 #include <stdio.h>
@@ -8,7 +8,7 @@
 #include <string.h>
 #include "pf.h"
 #include "sp.h"
-#include "am.h" // Includes testam.h for RecIdType and RecIdToInt
+#include "am.h"
 
 #define DATA_BASE_NAME "data_test_inc.tdb"
 #define INDEX_BASE_NAME "index_test_inc"
@@ -16,9 +16,8 @@
 #define INDEX_NO 0
 #define ATTR_TYPE 'i'
 #define ATTR_LEN sizeof(int)
-#define NUM_RECORDS 50  // Number of records to insert
-#define REC_SIZE 20     // Must match splayer testconvert
-
+#define NUM_RECORDS 50
+#define REC_SIZE 20
 int main()
 {
     int sp_fd, am_fd;
@@ -33,10 +32,9 @@ int main()
     int sp_pageNum = -1; // Current page number for splayer file
     char *sp_pageBuf = NULL; // Buffer for current splayer page
 
-    // Initialize layers
     PF_Init(20,0);
 
-    printf("--- Test Case 2: Create Index Incrementally ---\n");
+    printf("TASK : Create Index Incrementally\n");
     printf("Creating Data File: %s\n", DATA_BASE_NAME);
     printf("Creating Index File: %s\n\n", INDEX_FILE_NAME);
 
@@ -68,35 +66,27 @@ int main()
     // Insert records (in reverse order to test tree splits)
     for (i = NUM_RECORDS - 1; i >= 0; i--) {
         key = i;
-        // Create a record (key followed by other data)
         memset(record, 0, REC_SIZE);
         memcpy(record, &key, sizeof(int));
         sprintf(record + sizeof(int), "rec-%d", key);
-
-        // --- Logic to insert into splayer file ---
-        if (sp_pageBuf == NULL) { // Need to allocate the first page
+        if (sp_pageBuf == NULL) {
             if (PF_AllocPage(sp_fd, &sp_pageNum, &sp_pageBuf) != PFE_OK) {
                 PF_PrintError("Error allocating first data page");
                 break;
             }
-            SP_InitPage(sp_pageBuf); // Initialize as slotted page
+            SP_InitPage(sp_pageBuf); 
         }
-
-        // 1. Try to insert record into current splayer page
         int slotID = SP_InsertRecord(sp_pageBuf, record, REC_SIZE);
         
-        if (slotID < 0) { // Page is full
-            // Unfix the full page
+        if (slotID < 0) {
             PF_UnfixPage(sp_fd, sp_pageNum, TRUE);
             
-            // Allocate a new page
             if (PF_AllocPage(sp_fd, &sp_pageNum, &sp_pageBuf) != PFE_OK) {
                 PF_PrintError("Error allocating new data page");
                 break;
             }
-            SP_InitPage(sp_pageBuf); // Initialize as slotted page
+            SP_InitPage(sp_pageBuf);
             
-            // Retry insertion on the new page
             slotID = SP_InsertRecord(sp_pageBuf, record, REC_SIZE);
             if (slotID < 0) {
                 printf("Error: Record too big for a new page.\n");
@@ -104,15 +94,10 @@ int main()
             }
         }
         
-        // At this point, record is inserted into sp_pageNum at slotID
-        
-        // **FIX**: Pack pageNum and slotID into a single int
         recId = (sp_pageNum << 16) | (slotID & 0xFFFF);
         
-        // RecIdToInt macro just returns the int (per testam.h)
         int_recId = RecIdToInt(recId); 
 
-        // 2. Insert into index file
         printf("Inserting key: %d, RECID: %d (Page %d, Slot %d)\n", key, int_recId, sp_pageNum, slotID);
         if (AM_InsertEntry(am_fd, ATTR_TYPE, ATTR_LEN, (char *)&key, int_recId) != AME_OK) {
             AM_PrintError("Error inserting entry into index");
@@ -120,17 +105,18 @@ int main()
     }
     printf("...Insertions complete.\n\n");
 
-    // Unfix the last data page if it's dirty
     if (sp_pageBuf != NULL) {
         PF_UnfixPage(sp_fd, sp_pageNum, TRUE);
     }
 
-    // Close files
     PF_CloseFile(sp_fd);
     PF_CloseFile(am_fd);
 
-    // Print the index to verify
-    printf("--- Printing Index Structure (from %s) ---\n", INDEX_FILE_NAME);
+    // return 0;
+
+
+
+    printf("Printing Index Structure (from %s)\n", INDEX_FILE_NAME);
     am_fd = PF_OpenFile((char *)INDEX_FILE_NAME);
     if (am_fd < 0)
     {
@@ -138,7 +124,6 @@ int main()
         exit(1);
     }
 
-    // Get the root page number
     if (PF_GetFirstPage(am_fd, &rootPageNum, &pageBuf) != PFE_OK)
     {
         PF_PrintError("Error getting root page");
@@ -149,7 +134,7 @@ int main()
 
     AM_PrintTree(am_fd, rootPageNum, ATTR_TYPE);
     PF_CloseFile(am_fd);
-    printf("--- Test Case 2 Complete ---\n");
+    printf("Create Index Incrementally : Verification Complete\n");
 
     return 0;
 }
