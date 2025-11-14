@@ -73,13 +73,13 @@ The `toydb/` directory contains the complete source code for the ToyDB storage e
 
 ### Test Commands
 
-This is the primary way to test the functionality of each layer. These commands build and run specific test executables. ***I also mesioned that to which Assignment Objective that test command belongs***.
+This is the primary way to test the functionality of each layer. These commands build and run specific test executables. ***I also mentioned to which Assignment Objective a particular test command belongs***.
 
   * `make testall`: Runs all tests from all layers (`am`, `pf`, and `sp`).
 
   * **PF Layer Tests:**
 
-      * (**Objective1**) TEST : compare LRU and MRU statargies for buffer
+      * (**Objective1**) TEST : compare LRU and MRU strategies for buffer
       ```
       make pf_testbuf
       ```
@@ -116,11 +116,11 @@ This is the primary way to test the functionality of each layer. These commands 
 
   * **AM Layer Tests:**
 
-      * (**Objective3 Task1**) TEST : create index for .tdb file in sigle function call
+      * (**Objective3 Task1**) TEST : create index for .tdb file in single function call
       ```
       make am_testcreateindex
       ```
-      * (**Objective3 Task2**) TEST : insert entry in .tdb 1 by 1 and also insert index for that entry in index file.
+      * (**Objective3 Task2**) TEST : insert entry in .tdb one by one and also insert index for that entry in index file.
       ```
       make am_testcreateindexincremental
       ```
