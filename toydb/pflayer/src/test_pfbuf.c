@@ -17,9 +17,9 @@
 #define TEST_FILE "buffertestfile_hotmix"
 
 #define BUFFER_SIZE 20
-#define HOT_SET_SIZE 10    // Pages 0-9 (e.g., index pages)
-#define COLD_SCAN_SIZE 45 // Pages 10-54 (e.g., table scan)
-#define TOTAL_PAGES (HOT_SET_SIZE + COLD_SCAN_SIZE)
+#define HOT_SET_SIZE 50    // Pages 0-49 (e.g., index pages)
+#define COLD_SET_SIZE 450  // Pages 50-449 (e.g., table scan)
+#define TOTAL_PAGES (HOT_SET_SIZE + COLD_SET_SIZE)
 
 #define TOTAL_ACCESSES 10000
 
@@ -144,7 +144,7 @@ void runTest(int hot_access_percentage)
             pagenum = HOT_SET_SIZE + cold_scan_tracker;
 
             cold_scan_tracker++;
-            if (cold_scan_tracker >= COLD_SCAN_SIZE)
+            if (cold_scan_tracker >= COLD_SET_SIZE)
             {
                 cold_scan_tracker = 0;
             }
