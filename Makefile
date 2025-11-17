@@ -14,9 +14,10 @@
 # make am_test2        : Runs 'test2' from the 'amlayer' directory.
 # make am_test3        : Runs 'test3' from the 'amlayer' directory.
 #
-# make pf_testpf       : Runs 'testpf' from the 'pflayer' directory.
-# make pf_testhash     : Runs 'testhash' from the 'pflayer' directory.
-# make pf_testbuf      : Runs 'testbuf' from the 'pflayer' directory.
+# make pf_testpf       			: Runs 'testpf' from the 'pflayer' directory.
+# make pf_testhash     			: Runs 'testhash' from the 'pflayer' directory.
+# make pf_testbuf      			: Runs 'testbuf' from the 'pflayer' directory.
+# make pf_testbuf_generategraph : Runs 'testbuf' from the 'pflayer' directory and generate graph for result
 #
 # make sp_testsp       : Runs 'testsp' from the 'splayer' directory.
 # make sp_testconvert  : Runs 'testconvert' from the 'splayer' directory.

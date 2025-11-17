@@ -6,9 +6,10 @@
 #
 # Tests
 #
-# make testpf            : Builds and runs the 'testpf' executable (build/testpf).
-# make testbuf           : Builds and runs the 'testbuf' executable (build/testbuf).
-# make testhash          : Builds and runs the 'testhash' executable (build/testhash).
+# make testpf            		: Builds and runs the 'testpf' executable (build/testpf).
+# make testbuf           		: Builds and runs the 'testbuf' executable (build/testbuf).
+# make testbuf_generategraph	: Builds and runs the 'testbuf' executable (build/testbuf) and also generate graph.
+# make testhash          		: Builds and runs the 'testhash' executable (build/testhash).
 
 CC = cc
 CFLAGS = -g -Wall
@@ -20,7 +21,7 @@ LIB_SRC = $(SRC_DIR)/pf.c $(SRC_DIR)/pfbuf.c $(SRC_DIR)/pfhash.c
 LIB_OBJ = $(BUILD_DIR)/pf.o $(BUILD_DIR)/pfbuf.o $(BUILD_DIR)/pfhash.o
 TARGET = $(BUILD_DIR)/pflayer.o
 
-.PHONY: pflayer clear clean testpf testbuf testhash
+.PHONY: pflayer clear clean testpf testbuf testhash testbuf_generategraph
 
 #default make
 pflayer: $(BUILD_DIR) $(TARGET)
@@ -75,6 +76,10 @@ $(TEST_BIN_BUFFER): $(TEST_OBJ_BUFFER) $(TARGET)
 
 $(BUILD_DIR)/testbuf.o: $(TEST_SRC_BUFFER)
 	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -c $< -o $@
+
+# test_pfbuf_generategraph
+testbuf_generategraph: testbuf 
+	python plot.py
 
 # test_pfhash
 TEST_SRC_HASH = $(SRC_DIR)/test_pfhash.c

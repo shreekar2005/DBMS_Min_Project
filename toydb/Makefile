@@ -83,6 +83,8 @@ pf_testhash:
 	$(MAKE) -C pflayer testhash
 pf_testbuf:
 	$(MAKE) -C pflayer testbuf
+pf_testbuf_generategraph :
+	$(MAKE) -C pflayer testbuf_generategraph
 
 sp_testsp:
 	$(MAKE) -C splayer testsp
