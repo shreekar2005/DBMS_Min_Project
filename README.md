@@ -85,6 +85,9 @@ This is the primary way to test the functionality of each layer. These commands 
       ```
       make pf_testbuf
       ```
+      * `make pf_testbuf_generategraph`: Runs the main `testbuf` from the `pflayer` and generate graph.
+        - To generate graph you need these python packages :
+        ```pip install pandas matplotlib```
       * `make pf_testpf`: Runs the main `testpf` from the `pflayer`.
       * `make pf_testhash`: Runs the `testhash` from the `pflayer`.
 
