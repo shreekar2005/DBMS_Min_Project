@@ -19,8 +19,8 @@ The details of the project problem are in `Assignment.pdf`.
   * `Assignment.pdf`: The project assignment details.
   * `data/`: Contains sample `.txt` data files used to populate the database.
   * `Reports/`: Contains project reports : 
-    1. `Report_Objective1.pdf` : where we talk about LRU MRU in buffer (implementation and comparision)
-    2. `About Slotted Paged file.pdf` : where we discussed about how we planned structure of slotted paged file.
+    1. `About Slotted Paged file.pdf` : where we discussed about how we planned structure of slotted paged file.
+    2. `Report_Objective1.pdf` : where we talk about LRU MRU in buffer (implementation and comparision)
     3. `Report_Objective2.pdf` : where we talked about how we implemented slotted page related functions
     4. `Report_Objective3.pdf` : where we talked about how we create index for file and create indices in bulk.
   * `toydb/`: The complete ToyDB source code.
