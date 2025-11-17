@@ -1,11 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# --- Configuration ---
-# The name of your data file
 data_filename = 'coordinates.txt' 
 plot_filename = 'graph.png'
-# --- End Configuration ---
 
 def plot_hit_rates_from_txt():
     """
@@ -20,12 +17,10 @@ def plot_hit_rates_from_txt():
     ...
     """
     try:
-        # Read the space-separated data file
-        # We specify no header and assign column names ourselves
         df = pd.read_csv(
             data_filename,
             delim_whitespace=True,  # Use whitespace (spaces, tabs) as separator
-            header=None,            # The file has no header row
+            header=None,
             names=['hot_mix_pct', 'lru_hit_rate', 'mru_hit_rate'] # Assign names
         )
     except FileNotFoundError:
@@ -47,7 +42,6 @@ def plot_hit_rates_from_txt():
     # Plot MRU
     plt.plot(df['hot_mix_pct'], df['mru_hit_rate'], label='MRU', marker='o')
 
-    # Customize the plot
     plt.title('Buffer Strategy Performance (LRU vs. MRU)', fontsize=16)
     plt.xlabel('Hot Set Access Percentage (%)', fontsize=12)
     plt.ylabel('Cache Hit Rate (%)', fontsize=12)
