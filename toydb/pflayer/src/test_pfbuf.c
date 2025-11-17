@@ -38,6 +38,13 @@ int main(void)
     printf("Total Accesses per Run: %d\n", TOTAL_ACCESSES);
     printf("Test is READ-ONLY\n\n");
 
+    FILE* fp=fopen("coordinates.txt", "w");
+
+    if (fp == NULL) {
+    printf("Error opening file!\n");
+    return 1;
+    }
+
     // This loop will generate the data for your X-axis
     for (int hot_mix = 0; hot_mix <= 100; hot_mix += 10)
     {
@@ -48,10 +55,15 @@ int main(void)
         PF_Init(BUFFER_SIZE, STRATEGY_LRU);
         runTest(hot_mix);
         PF_PrintStats(); // Make sure your PF_PrintStats() prints the counters!
+        double lru_hit_rate=hit_rate;
         printf(" With MRU\n");
         PF_Init(BUFFER_SIZE, STRATEGY_MRU); 
         runTest(hot_mix);
         PF_PrintStats(); // Make sure your PF_PrintStats() prints the counters!
+        double mru_hit_rate=hit_rate;
+
+        //writing "hot mix, lru_hit_rate, mru_hit_rate" in a line of file
+        fprintf(fp, "%d %lf %lf\n", hot_mix, lru_hit_rate*100.0, mru_hit_rate*100.0);
     }
 
     if ((error = PF_DestroyFile(TEST_FILE)) != PFE_OK)

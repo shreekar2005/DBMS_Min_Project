@@ -48,6 +48,7 @@ extern long num_logical_writes;
 extern long num_buffer_hits;
 extern long num_physical_reads;
 extern long num_physical_writes;
+extern double hit_rate; //added new
 
 /******************************** Interface for outside PFlayer *******************************/
 

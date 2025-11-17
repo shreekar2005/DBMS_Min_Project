@@ -26,6 +26,7 @@ long num_logical_writes=0;
 long num_buffer_hits=0;
 long num_physical_reads=0;
 long num_physical_writes=0;
+double hit_rate=0.0;
 
 static PFftab_ele PFftab[PF_FTAB_SIZE]; /**< table of opened files */
 
@@ -594,7 +595,7 @@ void PF_PrintStats(void)
 	long total_logical = num_logical_reads + num_logical_writes;
 	if (total_logical > 0)
 	{
-		double hit_rate = (double)num_buffer_hits / num_logical_reads;
+		hit_rate = (double)num_buffer_hits / num_logical_reads;
 		printf("Hit Rate:         \033[1m%.2f%%\033[0m\n", hit_rate * 100.0);
 	}
 	printf("---\n");
