@@ -67,3 +67,5 @@ testdata_sorted.txt
 
 # For graph coordinates and graph image in pflayer
 coordinates.txt
+
+.venv
