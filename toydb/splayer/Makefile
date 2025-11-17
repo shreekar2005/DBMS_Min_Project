@@ -97,6 +97,7 @@ TEST_OBJ_CONVERT = $(BUILD_DIR)/testconvert.o
 TEST_BIN_CONVERT = $(BUILD_DIR)/testconvert
 
 testconvert: $(BUILD_DIR) $(TEST_BIN_CONVERT) testdata.txt
+	rm -f testdata.tdb
 	$(TEST_BIN_CONVERT) testdata.txt 20 0
 
 $(TEST_BIN_CONVERT): $(TEST_OBJ_CONVERT) $(TARGET) $(PFLAYER_LIB)

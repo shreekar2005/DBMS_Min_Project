@@ -95,6 +95,8 @@ TEST_OBJ_1 = $(BUILD_DIR)/test1.o
 TEST_BIN_1 = $(BUILD_DIR)/test1
 
 test1: $(BUILD_DIR) $(TEST_BIN_1)
+	@echo
+	@echo
 	./$(TEST_BIN_1)
 
 $(TEST_BIN_1): $(TEST_OBJ_1) $(TARGET) $(PF_LAYER_OBJ) $(SP_LAYER_OBJ)
@@ -109,6 +111,8 @@ TEST_OBJ_2 = $(BUILD_DIR)/test2.o
 TEST_BIN_2 = $(BUILD_DIR)/test2
 
 test2: $(BUILD_DIR) $(TEST_BIN_2)
+	@echo
+	@echo
 	./$(TEST_BIN_2)
 
 $(TEST_BIN_2): $(TEST_OBJ_2) $(TARGET) $(PF_LAYER_OBJ) $(SP_LAYER_OBJ)
@@ -123,6 +127,8 @@ TEST_OBJ_3 = $(BUILD_DIR)/test3.o
 TEST_BIN_3 = $(BUILD_DIR)/test3
 
 test3: $(BUILD_DIR) $(TEST_BIN_3)
+	@echo
+	@echo
 	./$(TEST_BIN_3)
 
 $(TEST_BIN_3): $(TEST_OBJ_3) $(TARGET) $(PF_LAYER_OBJ) $(SP_LAYER_OBJ)
@@ -137,6 +143,9 @@ TEST_OBJ_CREATE = $(BUILD_DIR)/testcreateindex.o
 TEST_BIN_CREATE = $(BUILD_DIR)/testcreateindex
 
 testcreateindex: $(BUILD_DIR) $(TEST_BIN_CREATE) testdata_unsorted.tdb
+	rm -f index_test_create.0
+	@echo
+	@echo
 	./$(TEST_BIN_CREATE)
 
 $(TEST_BIN_CREATE): $(TEST_OBJ_CREATE) $(TARGET) $(PF_LAYER_OBJ) $(SP_LAYER_OBJ)
@@ -155,6 +164,9 @@ TEST_OBJ_INC = $(BUILD_DIR)/testcreateindexincremental.o
 TEST_BIN_INC = $(BUILD_DIR)/testcreateindexincremental
 
 testcreateindexincremental: $(BUILD_DIR) $(TEST_BIN_INC)
+	rm -f data_test_inc.tdb index_test_inc.0
+	@echo
+	@echo
 	./$(TEST_BIN_INC)
 
 $(TEST_BIN_INC): $(TEST_OBJ_INC) $(TARGET) $(PF_LAYER_OBJ) $(SP_LAYER_OBJ)
@@ -169,6 +181,9 @@ TEST_OBJ_BULK = $(BUILD_DIR)/testbulkload.o
 TEST_BIN_BULK = $(BUILD_DIR)/testbulkload
 
 testbulkload: $(BUILD_DIR) $(TEST_BIN_BULK) testdata_sorted.tdb
+	rm -f index_test_bulk.0
+	@echo
+	@echo
 	./$(TEST_BIN_BULK)
 
 $(TEST_BIN_BULK): $(TEST_OBJ_BULK) $(TARGET) $(PF_LAYER_OBJ) $(SP_LAYER_OBJ)

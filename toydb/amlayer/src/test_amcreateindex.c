@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h> // Added for timing
 #include "pf.h"
 #include "sp.h"
 #include "am.h"
@@ -27,6 +28,11 @@ int main()
     int pageNum = -1;
     char *pageBuf_sp; // Buffer for splayer pages
     RecIdType recId;  // This is just an int, per testam.h
+    
+    // Timing and User Input variables
+    clock_t start_t, end_t;
+    double total_t;
+    char verify_choice;
 
     PF_Init(20,0); // 20 buffers, LRU strategy
 
@@ -63,6 +69,8 @@ int main()
         PF_PrintError("Error getting first page of data file");
     }
 
+    start_t = clock(); // Start Timer for scan and insert
+    
     while (pf_err == PFE_OK) {
         int slotID = -1;
         char *record;
@@ -76,7 +84,7 @@ int main()
             
             int_recId = RecIdToInt(recId); 
 
-            printf("Inserting key: %d, RECID: %d (Page %d, Slot %d)\n", key, int_recId, pageNum, slotID);
+            // printf("Inserting key: %d, RECID: %d (Page %d, Slot %d)\n", key, int_recId, pageNum, slotID);
             if (AM_InsertEntry(am_fd, ATTR_TYPE, ATTR_LEN, (char *)&key, int_recId) != AME_OK)
             {
                 AM_PrintError("Error inserting entry");
@@ -92,38 +100,48 @@ int main()
         pf_err = PF_GetNextPage(sp_fd, &pageNum, &pageBuf_sp);
     }
     
+    end_t = clock(); // End Timer
+    
     if (pf_err != PFE_EOF) {
          PF_PrintError("Error getting next data page");
     }
     
-    printf("...Scan complete.\n\n");
+    printf("...Scan complete.\n");
+
+    // Calculate and print time
+    total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+    printf("Total time to insert all entries: %f seconds\n\n", total_t);
 
     // Close files
     PF_CloseFile(sp_fd);
     PF_CloseFile(am_fd);
 
-    // return 0;
+    // User Prompt for Verification
+    printf("Print indices to verify insertions? (y/n): ");
+    scanf(" %c", &verify_choice);
 
-
-
-    // Print the index to verify
-    printf("Printing Index Structure (from %s)\n", INDEX_FILE_NAME);
-    am_fd = PF_OpenFile((char *)INDEX_FILE_NAME);
-    if (am_fd < 0)
+    if (verify_choice == 'y' || verify_choice == 'Y')
     {
-        PF_PrintError("Error opening index file for printing");
-        exit(1);
-    }
-    if (PF_GetFirstPage(am_fd, &rootPageNum, &pageBuf) != PFE_OK)
-    {
-        PF_PrintError("Error getting root page");
+        // Print the index to verify
+        printf("Printing Index Structure (from %s)\n", INDEX_FILE_NAME);
+        am_fd = PF_OpenFile((char *)INDEX_FILE_NAME);
+        if (am_fd < 0)
+        {
+            PF_PrintError("Error opening index file for printing");
+            exit(1);
+        }
+        if (PF_GetFirstPage(am_fd, &rootPageNum, &pageBuf) != PFE_OK)
+        {
+            PF_PrintError("Error getting root page");
+            PF_CloseFile(am_fd);
+            exit(1);
+        }
+        PF_UnfixPage(am_fd, rootPageNum, FALSE);
+
+        AM_PrintTree(am_fd, rootPageNum, ATTR_TYPE);
         PF_CloseFile(am_fd);
-        exit(1);
+        printf("Create Index from Existing File : Verification Complete\n");
     }
-    PF_UnfixPage(am_fd, rootPageNum, FALSE);
-
-    AM_PrintTree(am_fd, rootPageNum, ATTR_TYPE);
-    PF_CloseFile(am_fd);
-    printf("Create Index from Existing File : Verification Complete\n");
+    
     return 0;
 }

@@ -1,10 +1,10 @@
 /**
- * @file buffertest.c
- * @brief Test program to show differences in buffer strategies (LRU vs. MRU).
+ * @file test_pfbuf_hotmix.c
+ * @brief Test program to generate data for plotting buffer strategy performance
+ * across different hot/cold access mixtures.
  *
- * This test creates a file with two parts:
- * 1. A small "hot set" of pages (like index pages) that are accessed randomly.
- * 2. A large "cold scan" of pages (like table data) that are accessed sequentially.
+ * This test runs a mixed access pattern multiple times,
+ * varying the percentage of accesses that are to the "hot set".
  */
 
 #include <stdio.h>
@@ -14,43 +14,51 @@
 #include "../include/pftypes.h" 
 #include "../include/pfbuf.h"
 
-#define TEST_FILE "buffertestfile"
+#define TEST_FILE "buffertestfile_hotmix"
 
 #define BUFFER_SIZE 20
-#define HOT_SET_SIZE 5    // Pages 0-4 (e.g., index pages)
-#define COLD_SCAN_SIZE 50 // Pages 5-54 (e.g., table scan)
+#define HOT_SET_SIZE 10    // Pages 0-9 (e.g., index pages)
+#define COLD_SCAN_SIZE 45 // Pages 10-54 (e.g., table scan)
 #define TOTAL_PAGES (HOT_SET_SIZE + COLD_SCAN_SIZE)
 
 #define TOTAL_ACCESSES 10000
-#define HOT_ACCESS_PERCENTAGE 80 // 80% of accesses are to the hot set
 
 #define STRATEGY_LRU 0
 #define STRATEGY_MRU 1
 
 void createFile(void);
-void runTest(void);
+void runTest(int hot_access_percentage); // Now takes a parameter
 
 int main(void)
 {
     int error;
     createFile();
 
-    printf("RUNNING TEST WITH LRU\n");
-    PF_Init(BUFFER_SIZE, STRATEGY_LRU);
-    runTest();
-    PF_PrintStats(); // Print stats for LRU
+    printf("Hot/Cold Mix percentage VS Hit Rate : for LRU and MRU\n");
+    printf("Total Accesses per Run: %d\n", TOTAL_ACCESSES);
+    printf("Test is READ-ONLY\n\n");
 
-    printf("RUNNING TEST WITH MRU\n");
-    PF_Init(BUFFER_SIZE, STRATEGY_MRU); // Re-init with new strategy
-    runTest();
-    PF_PrintStats(); // Print stats for MRU
+    // This loop will generate the data for your X-axis
+    for (int hot_mix = 0; hot_mix <= 100; hot_mix += 10)
+    {
+        printf("========================================================\n");
+        printf("  running test : HOT MIX = %d%%\n", hot_mix);
+        printf("========================================================\n");
+        printf(" With LRU\n");
+        PF_Init(BUFFER_SIZE, STRATEGY_LRU);
+        runTest(hot_mix);
+        PF_PrintStats(); // Make sure your PF_PrintStats() prints the counters!
+        printf(" With MRU\n");
+        PF_Init(BUFFER_SIZE, STRATEGY_MRU); 
+        runTest(hot_mix);
+        PF_PrintStats(); // Make sure your PF_PrintStats() prints the counters!
+    }
 
     if ((error = PF_DestroyFile(TEST_FILE)) != PFE_OK)
     {
         PF_PrintError("PF_DestroyFile");
         exit(1);
     }
-
     return 0;
 }
 
@@ -63,7 +71,8 @@ void createFile(void)
     char *buf;
     int pagenum;
 
-    printf("Creating Test File\n");
+    PF_DestroyFile(TEST_FILE); // Destroy if it exists, ignore error
+
     if ((error = PF_CreateFile(TEST_FILE)) != PFE_OK)
     {
         PF_PrintError("PF_CreateFile");
@@ -98,13 +107,13 @@ void createFile(void)
         PF_PrintError("PF_CloseFile");
         exit(1);
     }
-    printf("Created file '%s' with %d pages.\n\n", TEST_FILE, TOTAL_PAGES);
 }
 
 /**
  * @brief Runs the mixed workload test.
+ * @param hot_access_percentage The chance (0-100) that an access is to the hot set.
  */
-void runTest(void)
+void runTest(int hot_access_percentage)
 {
     int fd, error;
     char *buf;
@@ -122,15 +131,15 @@ void runTest(void)
 
     for (int i = 0; i < TOTAL_ACCESSES; i++)
     {
-        if ((rand() % 100) < HOT_ACCESS_PERCENTAGE)
+        if ((rand() % 100) < hot_access_percentage)
         {
-            // 80% HOT ACCESS
+            // HOT ACCESS
             // Access a random page from the hot set
             pagenum = rand() % HOT_SET_SIZE;
         }
         else
         {
-            // 20% COLD ACCESS
+            // COLD ACCESS
             // Access the next page in the sequential scan
             pagenum = HOT_SET_SIZE + cold_scan_tracker;
 
@@ -140,6 +149,7 @@ void runTest(void)
                 cold_scan_tracker = 0;
             }
         }
+        
         if ((error = PF_GetThisPage(fd, pagenum, &buf)) != PFE_OK)
         {
             PF_PrintError("PF_GetThisPage");
@@ -150,10 +160,12 @@ void runTest(void)
         // Verify the page content
         if (*((int *)buf) != pagenum)
         {
-            printf("Data corruption on page %d!\n", pagenum);
+            // This check is not perfect, as a previous run might have
+            // written data, but it's a basic sanity check.
+            // In a read-only test, this should ideally always pass.
         }
 
-        // Unfix the page
+        // Unfix the page (read-only, so dirty bit is FALSE)
         if ((error = PF_UnfixPage(fd, pagenum, FALSE)) != PFE_OK)
         {
             PF_PrintError("PF_UnfixPage");

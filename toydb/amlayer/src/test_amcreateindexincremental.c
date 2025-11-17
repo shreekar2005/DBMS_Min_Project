@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h> // Added for timing
 #include "pf.h"
 #include "sp.h"
 #include "am.h"
@@ -18,6 +19,7 @@
 #define ATTR_LEN sizeof(int)
 #define NUM_RECORDS 50
 #define REC_SIZE 20
+
 int main()
 {
     int sp_fd, am_fd;
@@ -31,6 +33,11 @@ int main()
     
     int sp_pageNum = -1; // Current page number for splayer file
     char *sp_pageBuf = NULL; // Buffer for current splayer page
+
+    // Timing and User Input variables
+    clock_t start_t, end_t;
+    double total_t;
+    char verify_choice;
 
     PF_Init(20,0);
 
@@ -63,6 +70,9 @@ int main()
     }
 
     printf("Inserting %d records into data file and index...\n", NUM_RECORDS);
+    
+    start_t = clock(); // Start Timer
+    
     // Insert records (in reverse order to test tree splits)
     for (i = NUM_RECORDS - 1; i >= 0; i--) {
         key = i;
@@ -103,7 +113,14 @@ int main()
             AM_PrintError("Error inserting entry into index");
         }
     }
-    printf("...Insertions complete.\n\n");
+    
+    end_t = clock(); // End Timer
+    
+    printf("...Insertions complete.\n");
+
+    // Calculate and print time
+    total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+    printf("Total time to insert all entries: %f seconds\n\n", total_t);
 
     if (sp_pageBuf != NULL) {
         PF_UnfixPage(sp_fd, sp_pageNum, TRUE);
@@ -112,29 +129,32 @@ int main()
     PF_CloseFile(sp_fd);
     PF_CloseFile(am_fd);
 
-    // return 0;
+    // User Prompt for Verification
+    printf("Print indices to verify insertions? (y/n): ");
+    scanf(" %c", &verify_choice);
 
-
-
-    printf("Printing Index Structure (from %s)\n", INDEX_FILE_NAME);
-    am_fd = PF_OpenFile((char *)INDEX_FILE_NAME);
-    if (am_fd < 0)
+    if (verify_choice == 'y' || verify_choice == 'Y')
     {
-        PF_PrintError("Error opening index file for printing");
-        exit(1);
-    }
+        printf("Printing Index Structure (from %s)\n", INDEX_FILE_NAME);
+        am_fd = PF_OpenFile((char *)INDEX_FILE_NAME);
+        if (am_fd < 0)
+        {
+            PF_PrintError("Error opening index file for printing");
+            exit(1);
+        }
 
-    if (PF_GetFirstPage(am_fd, &rootPageNum, &pageBuf) != PFE_OK)
-    {
-        PF_PrintError("Error getting root page");
+        if (PF_GetFirstPage(am_fd, &rootPageNum, &pageBuf) != PFE_OK)
+        {
+            PF_PrintError("Error getting root page");
+            PF_CloseFile(am_fd);
+            exit(1);
+        }
+        PF_UnfixPage(am_fd, rootPageNum, FALSE);
+
+        AM_PrintTree(am_fd, rootPageNum, ATTR_TYPE);
         PF_CloseFile(am_fd);
-        exit(1);
+        printf("Create Index Incrementally : Verification Complete\n");
     }
-    PF_UnfixPage(am_fd, rootPageNum, FALSE);
-
-    AM_PrintTree(am_fd, rootPageNum, ATTR_TYPE);
-    PF_CloseFile(am_fd);
-    printf("Create Index Incrementally : Verification Complete\n");
 
     return 0;
 }

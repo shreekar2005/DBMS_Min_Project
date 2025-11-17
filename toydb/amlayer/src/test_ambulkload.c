@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h> // Added for timing
 #include "pf.h"
 #include "sp.h"
 #include "am.h"
@@ -20,6 +21,11 @@ int main()
     int sp_fd, am_fd;
     int rootPageNum;
     char *pageBuf;
+    
+    // Timing variables
+    clock_t start_t, end_t;
+    double total_t;
+    char verify_choice;
 
     PF_Init(20,0); // 20 buffers, LRU strategy
 
@@ -51,8 +57,10 @@ int main()
         exit(1);
     }
 
-    // Call the bulk-load function
+    // Call the bulk-load function with timing
     printf("Calling AM_BulkLoad...\n");
+    
+    start_t = clock(); // Start Timer
     if (AM_BulkLoad(am_fd, sp_fd, ATTR_TYPE, ATTR_LEN) != AME_OK)
     {
         AM_PrintError("Error during bulk-load");
@@ -60,34 +68,44 @@ int main()
         PF_CloseFile(am_fd);
         exit(1);
     }
-    printf("...Bulk-load function returned.\n\n");
+    end_t = clock(); // End Timer
+    
+    printf("...Bulk-load function returned.\n");
+
+    // Calculate and print time
+    total_t = (double)(end_t - start_t) / CLOCKS_PER_SEC;
+    printf("Total time to bulk-load entries: %f seconds\n\n", total_t);
 
     // Close files
     PF_CloseFile(sp_fd);
     PF_CloseFile(am_fd);
 
-    // return 0;
+    // User Prompt for Verification
+    printf("Print indices to verify insertions? (y/n): ");
+    scanf(" %c", &verify_choice);
 
-
-
-    // Print the index to verify
-    printf("Printing Index Structure (from %s)\n", INDEX_FILE_NAME);
-    am_fd = PF_OpenFile((char *)INDEX_FILE_NAME);
-    if (am_fd < 0)
+    if (verify_choice == 'y' || verify_choice == 'Y')
     {
-        PF_PrintError("Error opening index file for printing");
-        exit(1);
-    }
-    if (PF_GetFirstPage(am_fd, &rootPageNum, &pageBuf) != PFE_OK)
-    {
-        PF_PrintError("Error getting root page");
+        // Print the index to verify
+        printf("Printing Index Structure (from %s)\n", INDEX_FILE_NAME);
+        am_fd = PF_OpenFile((char *)INDEX_FILE_NAME);
+        if (am_fd < 0)
+        {
+            PF_PrintError("Error opening index file for printing");
+            exit(1);
+        }
+        if (PF_GetFirstPage(am_fd, &rootPageNum, &pageBuf) != PFE_OK)
+        {
+            PF_PrintError("Error getting root page");
+            PF_CloseFile(am_fd);
+            exit(1);
+        }
+        PF_UnfixPage(am_fd, rootPageNum, FALSE);
+
+        AM_PrintTree(am_fd, rootPageNum, ATTR_TYPE);
         PF_CloseFile(am_fd);
-        exit(1);
+        printf("Bulk-Load Index from Sorted File : Verification Complete\n");
     }
-    PF_UnfixPage(am_fd, rootPageNum, FALSE);
-
-    AM_PrintTree(am_fd, rootPageNum, ATTR_TYPE);
-    PF_CloseFile(am_fd);
-    printf("Bulk-Load Index from Sorted File : Verification Complete\n");
+    
     return 0;
 }
