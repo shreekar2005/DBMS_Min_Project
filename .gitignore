@@ -63,3 +63,7 @@ build/
 # For some files in amlayer
 testdata_sorted.txt
 *.0
+
+
+# For graph coordinates and graph image in pflayer
+coordinates.txt
