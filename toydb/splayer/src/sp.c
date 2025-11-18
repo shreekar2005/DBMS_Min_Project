@@ -44,7 +44,7 @@ static Slot *getSlots(char *pagePtr)
     return (Slot *)(pagePtr + sizeof(PageHeader));
 }
 
-/* --- Low-Level Page Functions (Unchanged) --- */
+/* --- Low-Level Page Functions --- */
 
 void SP_InitPage(char *pagePtr)
 {
